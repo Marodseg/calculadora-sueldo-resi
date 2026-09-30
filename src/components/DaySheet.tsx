@@ -5,6 +5,7 @@ import { buildDays, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_LABEL } from "../lib/rates";
 import type { DayOverride, DayType, DayView, Guardia, GuardiaMode, MonthConfig } from "../lib/types";
 import { IconClose, IconFlag, IconMoon, IconWarn } from "./icons";
+import { SheetLayout } from "./SheetLayout";
 import { Toggle } from "./ui";
 
 /** Duración de la animación de cierre de vaul (0,5 s) más un pequeño margen. */
@@ -50,11 +51,7 @@ export function DaySheet({ month, cfg, day, onClose, onChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet" aria-describedby={undefined} onCloseAutoFocus={(e) => e.preventDefault()}>
-          {day !== null && (
-            <div className="sheet-body">
-              <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />
-            </div>
-          )}
+          {day !== null && <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
@@ -86,23 +83,27 @@ function SheetBody({ day, days, cfg, onClose, onChange }: BodyProps) {
     view.guardia && setGuardia({ ...view.guardia, customHours: Math.min(24, Math.max(0, hours)) });
 
   return (
-    <>
-      <div className="sheet-grab" />
-      <div className="sheet-head">
-        <div>
-          <Drawer.Title className="sheet-day">{day}</Drawer.Title>
-          <p className="sheet-wd">{WEEKDAYS[view.weekday]}</p>
-          {view.holiday && (
-            <p className="sheet-holiday">
-              <IconFlag size={13} /> {view.holiday}
-            </p>
-          )}
-        </div>
-        <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
-          <IconClose size={18} />
-        </button>
-      </div>
-
+    <SheetLayout
+      header={
+        <>
+          <div className="sheet-grab" />
+          <div className="sheet-head">
+            <div>
+              <Drawer.Title className="sheet-day">{day}</Drawer.Title>
+              <p className="sheet-wd">{WEEKDAYS[view.weekday]}</p>
+              {view.holiday && (
+                <p className="sheet-holiday">
+                  <IconFlag size={13} /> {view.holiday}
+                </p>
+              )}
+            </div>
+            <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
+              <IconClose size={18} />
+            </button>
+          </div>
+        </>
+      }
+    >
       <p className="sheet-label">Tipo de día</p>
       <ToggleGroup.Root
         type="single"
@@ -198,6 +199,6 @@ function SheetBody({ day, days, cfg, onClose, onChange }: BodyProps) {
       <button className="primary-btn" onClick={onClose}>
         Listo
       </button>
-    </>
+    </SheetLayout>
   );
 }

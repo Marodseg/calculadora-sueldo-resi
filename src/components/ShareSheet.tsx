@@ -6,6 +6,7 @@ import { buildDays } from "../lib/calc";
 import { buildSummaryText, renderShareImage, type ShareInput } from "../lib/share";
 import type { Store } from "../lib/useStore";
 import { IconClose, IconCopy, IconDownload, IconShare } from "./icons";
+import { SheetLayout } from "./SheetLayout";
 import { Toggle } from "./ui";
 
 interface Props {
@@ -76,15 +77,19 @@ export function ShareSheet({ store, open, onOpenChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet share-sheet" aria-describedby={undefined}>
-          <div className="sheet-body">
-            <div className="sheet-grab" />
-            <div className="sheet-head">
-              <Drawer.Title className="share-title">Compartir resumen</Drawer.Title>
-              <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
-                <IconClose size={18} />
-              </button>
-            </div>
-
+          <SheetLayout
+            header={
+              <>
+                <div className="sheet-grab" />
+                <div className="sheet-head">
+                  <Drawer.Title className="share-title">Compartir resumen</Drawer.Title>
+                  <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
+                    <IconClose size={18} />
+                  </button>
+                </div>
+              </>
+            }
+          >
             <div className="share-preview">
               {image ? (
                 <img src={image.url} alt="Vista previa del resumen del mes" />
@@ -124,7 +129,7 @@ export function ShareSheet({ store, open, onOpenChange }: Props) {
                 </button>
               </div>
             </div>
-          </div>
+          </SheetLayout>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

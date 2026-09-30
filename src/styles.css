@@ -953,12 +953,24 @@ summary:focus-visible {
     transform: translateY(100%);
   }
 }
+.sheet-top {
+  flex: none;
+  padding: 8px 18px 8px;
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.sheet-top.scrolled {
+  border-bottom-color: var(--line);
+  box-shadow: 0 8px 12px -10px rgba(0, 0, 0, 0.25);
+}
 .sheet-body {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
-  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
+  padding: 6px 18px calc(18px + env(safe-area-inset-bottom));
 }
 .sheet-grab {
   width: 40px;
@@ -968,12 +980,6 @@ summary:focus-visible {
   margin: 0 auto 10px;
 }
 .sheet-head {
-  /* Se queda fijo arriba al desplazar el panel, para no perder el botón de cerrar. */
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  background: var(--surface);
-  padding-block: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;

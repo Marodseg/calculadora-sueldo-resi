@@ -247,6 +247,10 @@ test.describe("paneles en pantallas bajas", () => {
       await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
       await expect(page.locator(".sheet-body").getByText(lastText).last()).toBeInViewport({ ratio: 1 });
 
+      // La cabecera no se desplaza: el botón de cerrar sigue a la vista y se marca el límite con la zona de contenido.
+      await expect(page.getByRole("button", { name: "Cerrar" })).toBeInViewport({ ratio: 1 });
+      await expect(page.locator(".sheet-top")).toHaveClass(/scrolled/);
+
       // Sin "hueco" en blanco: el contenido desplazable no es mucho más alto que el visible.
       const { scrollHeight, clientHeight } = await body.evaluate((el) => ({
         scrollHeight: el.scrollHeight,

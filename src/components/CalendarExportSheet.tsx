@@ -7,6 +7,7 @@ import { parseMonth } from "../lib/calc";
 import { buildIcs, type IcsMonth, type Reminder } from "../lib/ics";
 import type { Store } from "../lib/useStore";
 import { IconClose, IconDownload, IconShare } from "./icons";
+import { SheetLayout } from "./SheetLayout";
 import { Dropdown, Toggle } from "./ui";
 
 type Scope = "month" | "year" | "all";
@@ -100,15 +101,19 @@ export function CalendarExportSheet({ store, open, onOpenChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet" aria-describedby={undefined}>
-          <div className="sheet-body">
-            <div className="sheet-grab" />
-            <div className="sheet-head">
-              <Drawer.Title className="share-title">Añadir a mi calendario</Drawer.Title>
-              <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
-                <IconClose size={18} />
-              </button>
-            </div>
-
+          <SheetLayout
+            header={
+              <>
+                <div className="sheet-grab" />
+                <div className="sheet-head">
+                  <Drawer.Title className="share-title">Añadir a mi calendario</Drawer.Title>
+                  <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
+                    <IconClose size={18} />
+                  </button>
+                </div>
+              </>
+            }
+          >
             <p className="sheet-label">Qué exportar</p>
             <ToggleGroup.Root
               type="single"
@@ -178,7 +183,7 @@ export function CalendarExportSheet({ store, open, onOpenChange }: Props) {
               los eventos se actualizan en vez de duplicarse. Consejo: impórtalo a un calendario propio para poder
               borrarlo entero si algo cambia.
             </p>
-          </div>
+          </SheetLayout>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
