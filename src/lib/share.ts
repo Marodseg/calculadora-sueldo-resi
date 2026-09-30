@@ -1,6 +1,6 @@
 import { fmtEur, fmtNum, monthLabel, type Totals } from "./calc";
 import { DAY_TYPE_LABEL } from "./rates";
-import type { DayView, MonthConfig } from "./types";
+import type { DayType, DayView, MonthConfig } from "./types";
 
 export interface ShareInput {
   month: string;
@@ -144,8 +144,9 @@ function drawHero(ctx: CanvasRenderingContext2D, input: ShareInput, showAmounts:
 
 function drawCalendar(ctx: CanvasRenderingContext2D, input: ShareInput) {
   const { days } = input;
-  const top = 600;
-  const cardH = 640;
+  const top = 596;
+  const cardH = 676;
+  const legendH = 74; // hueco para la leyenda al pie de la tarjeta
   ctx.fillStyle = C.card;
   roundRect(ctx, PAD - 16, top, W - (PAD - 16) * 2, cardH, 36);
   ctx.fill();
@@ -158,7 +159,7 @@ function drawCalendar(ctx: CanvasRenderingContext2D, input: ShareInput) {
     (new Date(input.month.split("-").map(Number)[0], Number(input.month.split("-")[1]) - 1, 1).getDay() + 6) % 7;
   const rows = Math.ceil((offset + days.length) / 7);
   // Las celdas se ajustan a la altura de la tarjeta: más grandes en meses de 5 filas.
-  const ch = Math.min(112, (cardH - 78 - 28 - (rows - 1) * gap) / rows);
+  const ch = Math.min(112, (cardH - 78 - legendH - 30 - (rows - 1) * gap) / rows);
 
   ctx.textAlign = "center";
   ctx.fillStyle = C.ink3;
@@ -201,6 +202,101 @@ function drawCalendar(ctx: CanvasRenderingContext2D, input: ShareInput) {
       ctx.fillText(d.type === "vac" ? "VAC" : "BAJA", x + cw / 2, y + ch - 12);
     }
   });
+  drawLegend(ctx, days, top, cardH);
+}
+
+const TYPE_LEGEND: Record<DayType, string> = {
+  lab: "Laborable",
+  sdf: "Fin de semana / festivo",
+  esp: "Festivo especial",
+  vac: "Vacaciones",
+  baja: "Baja",
+};
+
+interface LegendItem {
+  label: string;
+  swatch: (ctx: CanvasRenderingContext2D, x: number, y: number) => void;
+}
+
+const SWATCH = 22;
+
+/** Leyenda de lo que aparece en el mes: solo los tipos de día usados, las guardias y los festivos. */
+function legendItems(days: DayView[]): LegendItem[] {
+  const items: LegendItem[] = [];
+  const present = new Set(days.map((d) => d.type));
+  for (const type of ["lab", "sdf", "esp", "vac", "baja"] as DayType[]) {
+    if (!present.has(type)) continue;
+    items.push({
+      label: TYPE_LEGEND[type],
+      swatch: (ctx, x, y) => {
+        ctx.fillStyle = C.cell[type];
+        roundRect(ctx, x, y, SWATCH, SWATCH, 6);
+        ctx.fill();
+      },
+    });
+  }
+  if (days.some((d) => d.guardia)) {
+    items.push({
+      label: "Guardia (horas)",
+      swatch: (ctx, x, y) => {
+        ctx.strokeStyle = C.brand;
+        ctx.lineWidth = 3.5;
+        roundRect(ctx, x + 1.75, y + 1.75, SWATCH - 3.5, SWATCH - 3.5, 6);
+        ctx.stroke();
+      },
+    });
+  }
+  if (days.some((d) => d.holiday)) {
+    items.push({
+      label: "Festivo",
+      swatch: (ctx, x, y) => {
+        ctx.fillStyle = C.holiday;
+        ctx.beginPath();
+        ctx.arc(x + SWATCH / 2, y + SWATCH / 2, 6, 0, Math.PI * 2);
+        ctx.fill();
+      },
+    });
+  }
+  return items;
+}
+
+function drawLegend(ctx: CanvasRenderingContext2D, days: DayView[], top: number, cardH: number) {
+  const items = legendItems(days);
+  ctx.font = `600 21px ${SANS}`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  const gapX = 26;
+  const labelGap = 10;
+  const widths = items.map((it) => SWATCH + labelGap + ctx.measureText(it.label).width);
+  const maxW = W - PAD * 2;
+
+  // Reparte los elementos en líneas que quepan en el ancho disponible.
+  const lines: number[][] = [[]];
+  let used = 0;
+  widths.forEach((w, i) => {
+    if (used > 0 && used + gapX + w > maxW) {
+      lines.push([]);
+      used = 0;
+    }
+    lines[lines.length - 1].push(i);
+    used += (used > 0 ? gapX : 0) + w;
+  });
+
+  const lineH = 32;
+  const blockH = lines.length * lineH;
+  let y = top + cardH - 14 - blockH;
+  for (const line of lines) {
+    const total = line.reduce((a, i) => a + widths[i], 0) + gapX * (line.length - 1);
+    let x = (W - total) / 2;
+    for (const i of line) {
+      items[i].swatch(ctx, x, y + 2);
+      ctx.fillStyle = C.ink2;
+      ctx.fillText(items[i].label, x + SWATCH + labelGap, y + 20);
+      x += widths[i] + gapX;
+    }
+    y += lineH;
+  }
 }
 
 /** Dibuja la tarjeta resumen del mes y la devuelve como PNG. */
@@ -220,7 +316,7 @@ export async function renderShareImage(input: ShareInput, showAmounts: boolean):
   ctx.textAlign = "center";
   ctx.fillStyle = C.ink3;
   ctx.font = `600 22px ${SANS}`;
-  ctx.fillText("Calculado con Sueldo Resi · marodseg.github.io/calculadora-sueldo-resi", W / 2, H - 46);
+  ctx.fillText("Calculado con Sueldo Resi · marodseg.github.io/calculadora-sueldo-resi", W / 2, H - 32);
 
   return new Promise((resolve, reject) =>
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No se pudo generar la imagen"))), "image/png"),
