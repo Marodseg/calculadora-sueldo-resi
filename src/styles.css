@@ -11,15 +11,20 @@
   --brand-ink: #ffffff;
   --brand-soft: #d9f0ea;
   --brand-soft-ink: #0b4f49;
-  --lab: #eef1ed;
-  --sdf: #dbe9f7;
-  --sdf-ink: #1e4f82;
-  --esp: #fbe7c3;
-  --esp-ink: #8a5a06;
-  --vac: #d5f0d8;
-  --vac-ink: #216a2d;
-  --baja: #f7d9d5;
-  --baja-ink: #a02f27;
+  --lab: #e9ede8;
+  --sdf: #b9d8f7;
+  --sdf-ink: #0a3a70;
+  --esp: #ffd88a;
+  --esp-ink: #5e3a00;
+  --vac: #a6e3b2;
+  --vac-ink: #0b4a1e;
+  --baja: #f6b1a9;
+  --baja-ink: #7d1d16;
+  --lab-acc: #8a9a92;
+  --sdf-acc: #2f7fd1;
+  --esp-acc: #e0930a;
+  --vac-acc: #2e9e4f;
+  --baja-acc: #d64536;
   --warn-bg: #fcefd2;
   --warn-ink: #8a5a06;
   --danger: #c0392b;
@@ -41,15 +46,20 @@
     --brand-ink: #06231d;
     --brand-soft: #16342d;
     --brand-soft-ink: #a5e8d9;
-    --lab: #1a2420;
-    --sdf: #1a3149;
-    --sdf-ink: #9ccbf5;
-    --esp: #40300f;
-    --esp-ink: #f0c26a;
-    --vac: #17371c;
-    --vac-ink: #8fd99a;
-    --baja: #42201d;
-    --baja-ink: #f2a39c;
+    --lab: #2a372f;
+    --sdf: #1f4d80;
+    --sdf-ink: #dcedff;
+    --esp: #6e4c08;
+    --esp-ink: #ffe6ad;
+    --vac: #1d6a33;
+    --vac-ink: #d9f7df;
+    --baja: #7d2b25;
+    --baja-ink: #ffdcd7;
+    --lab-acc: #6f8078;
+    --sdf-acc: #5aa9f5;
+    --esp-acc: #f0b23a;
+    --vac-acc: #4fcf77;
+    --baja-acc: #f2766b;
     --warn-bg: #3a2d10;
     --warn-ink: #f0c26a;
     --danger: #ef8378;
@@ -1414,4 +1424,57 @@ summary:focus-visible {
 }
 .link-danger {
   margin-top: 10px;
+}
+
+/* --- distinción de tipos de día: tono de fondo + acento (no depende solo del color de fondo) --- */
+.cell.t-lab,
+.type-chip.t-lab,
+.lg.t-lab {
+  --acc: var(--lab-acc);
+}
+.cell.t-sdf,
+.type-chip.t-sdf,
+.lg.t-sdf {
+  --acc: var(--sdf-acc);
+}
+.cell.t-esp,
+.type-chip.t-esp,
+.lg.t-esp {
+  --acc: var(--esp-acc);
+}
+.cell.t-vac,
+.type-chip.t-vac,
+.lg.t-vac {
+  --acc: var(--vac-acc);
+}
+.cell.t-baja,
+.type-chip.t-baja,
+.lg.t-baja {
+  --acc: var(--baja-acc);
+}
+
+.cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 22%;
+  right: 22%;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: var(--acc);
+}
+.cell.t-lab::before {
+  opacity: 0.45;
+}
+.lg {
+  border: 2px solid var(--acc);
+}
+.type-chip::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--acc);
+  margin-right: 8px;
+  flex-shrink: 0;
 }
