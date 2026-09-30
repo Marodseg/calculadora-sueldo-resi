@@ -188,28 +188,6 @@ export function computeTotals(key: string, cfg: MonthConfig): Totals {
   };
 }
 
-/** Estimación aproximada (solo orientativa) del % de IRPF proyectando el bruto del mes a 12 meses. */
-export function estimateIrpf(bruto: number) {
-  const annual = bruto * 12;
-  const taxable = Math.max(0, annual - 5550);
-  const brackets: [number, number][] = [
-    [12450, 0.19],
-    [20200, 0.24],
-    [35200, 0.3],
-    [60000, 0.37],
-    [300000, 0.45],
-  ];
-  let tax = 0;
-  let prev = 0;
-  for (const [upper, rate] of brackets) {
-    if (taxable > prev) {
-      tax += (Math.min(taxable, upper) - prev) * rate;
-      prev = upper;
-    }
-  }
-  return annual > 0 ? Math.round((tax / annual) * 1000) / 10 : 0;
-}
-
 export const fmtEur = (n: number) => {
   const v = r2(n);
   return (

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeTotals, deferredHours, estimateIrpf, nextMonthFirstDayType, shiftMonth } from "./calc";
+import { computeTotals, deferredHours, nextMonthFirstDayType, shiftMonth } from "./calc";
 import { newMonthConfig } from "./storage";
 
 describe("calculadora", () => {
@@ -41,7 +41,6 @@ describe("calculadora", () => {
     const r2 = newMonthConfig("R2", 15);
     expect(computeTotals("2026-09", r1).irpfAmount).toBe(0);
     expect(computeTotals("2026-09", r2).irpfAmount).toBeGreaterThan(0);
-    expect(estimateIrpf(0)).toBe(0);
   });
 });
 

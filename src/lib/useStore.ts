@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { computeTotals, currentMonthKey, deferredHours, nextMonthFirstDayType, shiftMonth } from "./calc";
+import { computeTotals, currentMonthKey, deferredHours, nextMonthFirstDayType, parseMonth, shiftMonth } from "./calc";
 import { emptyData, loadData, newMonthConfig, sanitize, saveData } from "./storage";
+import { projectYear } from "./year";
 import type { AppData, DayOverride, ExtraHours, MonthConfig, Year } from "./types";
 
 const uid = () => crypto.randomUUID();
@@ -61,6 +62,12 @@ export function useStore() {
 
   const totals = useMemo(() => computeTotals(month, cfg), [month, cfg]);
 
+  /** Proyección del año natural del mes activo (incluye el mes activo aunque aún no esté guardado). */
+  const yearProjection = useMemo(
+    () => projectYear(data.months, parseMonth(month).y, { key: month, cfg }),
+    [data.months, month, cfg],
+  );
+
   const exportJson = () => JSON.stringify(data, null, 2);
   const importJson = (text: string) => {
     const d = sanitize(JSON.parse(text));
@@ -75,6 +82,7 @@ export function useStore() {
     setMonth,
     cfg,
     totals,
+    yearProjection,
     carry,
     setYear,
     setIrpf,

@@ -7,7 +7,7 @@ import { DaySheet } from "./components/DaySheet";
 import { Extras } from "./components/Extras";
 import { MonthSwitcher } from "./components/Header";
 import { Hero } from "./components/Hero";
-import { IconCalendar, IconChart, IconInfo, IconReceipt, IconReset } from "./components/icons";
+import { IconCalendar, IconChart, IconInfo, IconReceipt, IconReset, IconTrend } from "./components/icons";
 import { Irpf } from "./components/Irpf";
 import { Confirm } from "./components/ui";
 import { YearPicker } from "./components/YearPicker";
@@ -15,13 +15,15 @@ import { useStore } from "./lib/useStore";
 
 // Pestañas secundarias: se cargan bajo demanda para aligerar la carga inicial.
 const History = lazy(() => import("./components/History").then((mod) => ({ default: mod.History })));
+const YearView = lazy(() => import("./components/YearView").then((mod) => ({ default: mod.YearView })));
 const Info = lazy(() => import("./components/Info").then((mod) => ({ default: mod.Info })));
 
-type Tab = "mes" | "nomina" | "historial" | "info";
+type Tab = "mes" | "nomina" | "anual" | "historial" | "info";
 
 const TABS: { id: Tab; label: string; icon: ReactNode }[] = [
   { id: "mes", label: "Mes", icon: <IconCalendar size={20} /> },
   { id: "nomina", label: "Nómina", icon: <IconReceipt size={20} /> },
+  { id: "anual", label: "Año", icon: <IconTrend size={20} /> },
   { id: "historial", label: "Historial", icon: <IconChart size={20} /> },
   { id: "info", label: "Info", icon: <IconInfo size={20} /> },
 ];
@@ -93,6 +95,7 @@ export default function App() {
             )}
 
             <Suspense fallback={null}>
+              {tab === "anual" && <YearView store={store} onOpen={openMonth} />}
               {tab === "historial" && (
                 <>
                   <h1 className="page-title">Historial</h1>

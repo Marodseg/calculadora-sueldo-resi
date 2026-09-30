@@ -1,8 +1,7 @@
-import { estimateIrpf } from "../lib/calc";
 import type { Store } from "../lib/useStore";
 
 export function Irpf({ store }: { store: Store }) {
-  const { cfg, totals } = store;
+  const { cfg, yearProjection } = store;
   if (cfg.year === "R1") {
     return (
       <section className="card">
@@ -39,13 +38,14 @@ export function Irpf({ store }: { store: Store }) {
           />
           <span>%</span>
         </div>
-        <button className="chip-btn" onClick={() => store.setIrpf(estimateIrpf(totals.bruto))}>
+        <button className="chip-btn" onClick={() => store.setIrpf(yearProjection.irpf.pct)}>
           Estimar
         </button>
       </div>
       <p className="hint">
-        Pon el porcentaje que aparece en tu nómina real. «Estimar» proyecta este mes a 12 meses: es solo orientativo,
-        depende de tu Modelo 145.
+        Pon el porcentaje que aparece en tu nómina real. «Estimar» proyecta el año {yearProjection.year} con tus meses
+        guardados ({yearProjection.irpf.pct.toLocaleString("es-ES")} %): es solo orientativo, depende de tu Modelo 145.
+        Verás el detalle en la pestaña Año.
       </p>
     </section>
   );

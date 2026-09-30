@@ -1560,3 +1560,71 @@ summary:focus-visible {
   font-size: 12px;
   font-weight: 700;
 }
+
+/* --- vista anual --- */
+.year-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.year-title {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.hero-foot {
+  position: relative;
+  margin: 12px 0 0;
+  font-size: 12px;
+  opacity: 0.85;
+}
+.irpf-pct {
+  margin: 0 0 8px;
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--brand);
+}
+.bar-col.static {
+  cursor: default;
+}
+.bar.projected {
+  background: repeating-linear-gradient(135deg, var(--brand-soft) 0 6px, transparent 6px 12px);
+  border: 1.5px dashed var(--brand);
+  border-bottom: 0;
+}
+.lg-bar {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--brand-2), var(--brand));
+}
+.lg-bar.projected {
+  background: repeating-linear-gradient(135deg, var(--brand-soft) 0 3px, transparent 3px 6px);
+  border: 1.5px dashed var(--brand);
+}
+.tabbar-inner {
+  grid-template-columns: repeat(5, 1fr);
+}
+.bars.year {
+  gap: 3px;
+  overflow: visible;
+}
+.bars.year .bar-col {
+  padding: 0;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+  gap: 3px;
+}
+.bars.year .bar-val {
+  font-size: 9px;
+}
+.bars.year .bar-lbl {
+  font-size: 10px;
+}
+.bars.year .bar-track {
+  border-radius: 7px;
+}
