@@ -1857,3 +1857,23 @@ summary:focus-visible {
 .cap::first-letter {
   text-transform: uppercase;
 }
+
+/* --- exportar al calendario --- */
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+}
+.option-row {
+  margin-top: 0;
+  gap: 12px;
+}
+.option-list + .option-row,
+.option-list ~ .option-row {
+  margin-top: 8px;
+}
+.calendar-export {
+  width: 100%;
+  margin-top: 14px;
+}

@@ -25,4 +25,5 @@ export {
   Flag as IconFlag,
   Share2 as IconShare,
   Copy as IconCopy,
+  CalendarPlus as IconCalendarPlus,
 } from "lucide-react";

@@ -7,8 +7,18 @@ import { DaySheet } from "./components/DaySheet";
 import { Extras } from "./components/Extras";
 import { MonthSwitcher } from "./components/Header";
 import { Hero } from "./components/Hero";
-import { IconCalendar, IconChart, IconInfo, IconReceipt, IconReset, IconShare, IconTrend } from "./components/icons";
+import {
+  IconCalendar,
+  IconChart,
+  IconInfo,
+  IconCalendarPlus,
+  IconReceipt,
+  IconReset,
+  IconShare,
+  IconTrend,
+} from "./components/icons";
 import { Irpf } from "./components/Irpf";
+import { CalendarExportSheet } from "./components/CalendarExportSheet";
 import { ShareSheet } from "./components/ShareSheet";
 import { Confirm } from "./components/ui";
 import { YearPicker } from "./components/YearPicker";
@@ -34,6 +44,7 @@ export default function App() {
   const [tab, setTab] = useState<Tab>("mes");
   const [openDay, setOpenDay] = useState<number | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -67,7 +78,12 @@ export default function App() {
               <>
                 <Hero totals={store.totals} onSeeDetail={() => setTab("nomina")} />
                 <YearPicker year={store.cfg.year} onChange={store.setYear} />
-                <Calendar month={store.month} cfg={store.cfg} onPick={setOpenDay} />
+                <Calendar
+                  month={store.month}
+                  cfg={store.cfg}
+                  onPick={setOpenDay}
+                  onExport={() => setCalendarOpen(true)}
+                />
                 <Extras store={store} />
                 <Irpf store={store} />
                 {isConfigured && (
@@ -92,9 +108,14 @@ export default function App() {
             {tab === "nomina" && (
               <>
                 <Hero totals={store.totals} />
-                <button className="btn share-btn" onClick={() => setShareOpen(true)}>
-                  <IconShare size={16} /> Compartir resumen del mes
-                </button>
+                <div className="btn-pair" style={{ margin: 0 }}>
+                  <button className="btn share-btn" onClick={() => setShareOpen(true)}>
+                    <IconShare size={16} /> Compartir resumen
+                  </button>
+                  <button className="btn share-btn" onClick={() => setCalendarOpen(true)}>
+                    <IconCalendarPlus size={16} /> Al calendario
+                  </button>
+                </div>
                 <Breakdown store={store} />
               </>
             )}
@@ -126,6 +147,7 @@ export default function App() {
         />
 
         <ShareSheet store={store} open={shareOpen} onOpenChange={setShareOpen} />
+        <CalendarExportSheet store={store} open={calendarOpen} onOpenChange={setCalendarOpen} />
 
         <Toaster position="top-center" richColors closeButton={false} toastOptions={{ className: "toast" }} />
 

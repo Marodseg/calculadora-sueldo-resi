@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { freezeToday, readNeto, seed } from "./helpers";
 
@@ -166,7 +167,7 @@ test.describe("compartir", () => {
     await page.goto("./");
     await page.locator('input[type="month"]').fill("2026-04");
     await page.getByRole("button", { name: "Nómina", exact: true }).click();
-    await page.getByRole("button", { name: "Compartir resumen del mes" }).click();
+    await page.getByRole("button", { name: "Compartir resumen" }).click();
 
     await expect(page.getByRole("img", { name: /Vista previa del resumen/ })).toBeVisible();
     const [download] = await Promise.all([
@@ -174,6 +175,53 @@ test.describe("compartir", () => {
       page.getByRole("button", { name: "Descargar" }).click(),
     ]);
     expect(download.suggestedFilename()).toBe("sueldo-resi-2026-04.png");
+  });
+});
+
+test.describe("calendario (.ics)", () => {
+  test.beforeEach(async ({ page }) => {
+    await seed(page);
+  });
+
+  test("exporta las guardias del año en un archivo iCalendar válido", async ({ page }) => {
+    await page.goto("./");
+    await page.getByRole("button", { name: "Nómina", exact: true }).click();
+    await page.getByRole("button", { name: "Al calendario" }).click();
+
+    const status = page.getByRole("status");
+    await expect(status).toContainText("24 eventos"); // 24 guardias y ninguna ausencia en los datos de ejemplo
+    await page.getByRole("switch", { name: "Festivos" }).click();
+    await expect(status).not.toContainText("24 eventos");
+
+    const [download] = await Promise.all([
+      page.waitForEvent("download"),
+      page.getByRole("button", { name: "Descargar .ics" }).click(),
+    ]);
+    expect(download.suggestedFilename()).toBe("sueldo-resi-calendario-2026.ics");
+
+    const ics = readFileSync(await download.path(), "utf8");
+    expect(ics.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
+    expect(ics).toContain("TZID:Europe/Madrid");
+    expect(ics).toContain("SUMMARY:Guardia 17 h");
+    expect(ics).toContain("SUMMARY:Guardia 24 h");
+    expect(ics).toContain("SUMMARY:Festivo: Jueves Santo");
+    expect(ics).not.toContain("€"); // sin importes
+  });
+
+  test("con todo desactivado no hay nada que exportar", async ({ page }) => {
+    await page.goto("./");
+    await page.getByRole("button", { name: "Nómina", exact: true }).click();
+    await page.getByRole("button", { name: "Al calendario" }).click();
+    await page.getByRole("switch", { name: "Guardias" }).click();
+    await page.getByRole("switch", { name: "Vacaciones y bajas" }).click();
+    await expect(page.getByRole("status")).toContainText("No hay nada que exportar");
+    await expect(page.getByRole("button", { name: "Descargar .ics" })).toBeDisabled();
+  });
+
+  test("también se puede abrir desde el calendario del mes", async ({ page }) => {
+    await page.goto("./");
+    await page.getByRole("button", { name: /Añadir a mi calendario/ }).click();
+    await expect(page.getByRole("heading", { name: "Añadir a mi calendario" })).toBeVisible();
   });
 });
 

@@ -1,11 +1,18 @@
 import { buildDays, currentMonthKey, firstWeekday, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_SHORT } from "../lib/rates";
 import type { MonthConfig } from "../lib/types";
-import { IconMoon } from "./icons";
+import { IconCalendarPlus, IconMoon } from "./icons";
 
 const HEAD = ["L", "M", "X", "J", "V", "S", "D"];
 
-export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConfig; onPick: (n: number) => void }) {
+interface Props {
+  month: string;
+  cfg: MonthConfig;
+  onPick: (day: number) => void;
+  onExport: () => void;
+}
+
+export function Calendar({ month, cfg, onPick, onExport }: Props) {
   const days = buildDays(month, cfg.days);
   const offset = (firstWeekday(month) + 6) % 7;
   const today = new Date();
@@ -101,6 +108,9 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
           ))}
         </ul>
       )}
+      <button className="btn calendar-export" onClick={onExport}>
+        <IconCalendarPlus size={16} /> Añadir a mi calendario (.ics)
+      </button>
       <p className="hint">
         Toca un día para marcar guardia, festivo especial, vacaciones o baja. Los festivos de Andalucía y Granada se
         cuentan ya como fin de semana/festivo (orientativo: confirma el calendario oficial).

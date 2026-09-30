@@ -41,6 +41,10 @@ tarifas del Anexo XVI de Retribuciones del SAS.
   guardias y días de vacaciones o baja.
 - **Compartir el mes.** Genera en tu dispositivo una imagen con el resumen (con o sin importes, para compartir solo
   las guardias) y la envía con el menú de compartir del móvil, la descarga o copia el resumen como texto.
+- **Exportar al calendario (.ics).** Añade tus guardias a Google Calendar, Apple Calendar u Outlook con su horario
+  real (15:00–08:00 o 08:00–08:00, en hora de Madrid), y opcionalmente las vacaciones, bajas y festivos, con un
+  recordatorio antes de cada guardia. Puedes exportar el mes, el año o todo. Sin importes ni datos personales, y al
+  volver a exportar los eventos se actualizan en lugar de duplicarse (UID estables).
 - **Historial.** Gráfico del líquido por mes, acumulado y media mensual.
 - **App instalable (PWA).** Añádela a la pantalla de inicio y funciona sin conexión; te avisa cuando hay una
   versión nueva.
@@ -55,6 +59,7 @@ tarifas del Anexo XVI de Retribuciones del SAS.
 </p>
 
 <p align="center">
+  <img src="docs/screenshots/calendario-ics.png" width="23%" alt="Exportar las guardias al calendario" />
   <img src="docs/screenshots/mes-oscuro.png" width="23%" alt="Modo oscuro" />
   <img src="docs/screenshots/info.png" width="23%" alt="Información y copia de seguridad" />
 </p>
@@ -87,6 +92,7 @@ src/
 │   ├── year.ts           # Proyección del año natural a partir de los meses guardados
 │   ├── guardiaStats.ts   # Resumen anual de guardias (horas, tarifas, días de la semana…)
 │   ├── share.ts          # Imagen y texto del resumen del mes para compartir
+│   ├── ics.ts            # Exportación a iCalendar (.ics): guardias, ausencias y festivos
 │   ├── storage.ts        # Persistencia en localStorage + validación de datos importados
 │   ├── useStore.ts       # Estado de la app (meses, mes activo, acciones)
 │   └── *.test.ts
@@ -114,9 +120,11 @@ npm run build         # comprobación de tipos + build de producción en dist/
 
 ### Calidad
 
-- **Unitarios (Vitest):** toda la lógica de negocio es pura y está en `src/lib`.
+- **Unitarios (Vitest):** toda la lógica de negocio es pura y está en `src/lib`. El `.ics` se valida parseándolo con
+  una librería independiente (`ical.js`).
 - **End-to-end (Playwright, emulando un Pixel 7):** marcar guardias, festivos, cambio de mes, historial, año,
-  copia de seguridad (exportar → borrar → importar), compartir, uso sin conexión y datos corruptos.
+  copia de seguridad (exportar → borrar → importar), compartir, exportación al calendario, uso sin conexión y
+  datos corruptos.
 - **Accesibilidad (axe-core):** cada pestaña y el panel del día, en tema claro y oscuro, sin violaciones WCAG A/AA.
 - **CI:** cada push ejecuta lint, formato, tests, build y e2e. Dependabot mantiene las dependencias al día.
 

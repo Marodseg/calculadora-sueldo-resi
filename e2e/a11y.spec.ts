@@ -33,5 +33,21 @@ for (const scheme of ["light", "dark"] as const) {
       const summary = results.violations.map((v) => `${v.id}: ${v.nodes.length} nodo(s) — ${v.help}`);
       expect(summary, summary.join("\n")).toEqual([]);
     });
+
+    for (const [label, opener, dialog] of [
+      ["compartir", "Compartir resumen", "Compartir resumen"],
+      ["calendario", "Al calendario", "Añadir a mi calendario"],
+    ] as const) {
+      test(`panel de ${label} sin violaciones`, async ({ page }) => {
+        await page.goto("./");
+        await page.getByRole("button", { name: "Nómina", exact: true }).click();
+        await page.getByRole("button", { name: opener }).click();
+        await page.getByRole("dialog", { name: dialog }).waitFor();
+        await page.waitForTimeout(700);
+        const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
+        const summary = results.violations.map((v) => `${v.id}: ${v.nodes.length} nodo(s) — ${v.help}`);
+        expect(summary, summary.join("\n")).toEqual([]);
+      });
+    }
   });
 }
