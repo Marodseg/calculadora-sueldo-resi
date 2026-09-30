@@ -1,5 +1,9 @@
 # Sueldo Resi
 
+[![CI](https://github.com/Marodseg/calculadora-sueldo-resi/actions/workflows/ci.yml/badge.svg)](https://github.com/Marodseg/calculadora-sueldo-resi/actions/workflows/ci.yml)
+[![Despliegue](https://github.com/Marodseg/calculadora-sueldo-resi/actions/workflows/deploy.yml/badge.svg)](https://github.com/Marodseg/calculadora-sueldo-resi/actions/workflows/deploy.yml)
+[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-green.svg)](LICENSE)
+
 Calculadora de nómina para **residentes MIR del SAS** (H. Virgen de las Nieves, Granada). Marca tus guardias,
 vacaciones y bajas en un calendario y ve al momento el bruto, las cotizaciones y el líquido de cada mes, con las
 tarifas del Anexo XVI de Retribuciones del SAS.
@@ -32,6 +36,8 @@ tarifas del Anexo XVI de Retribuciones del SAS.
   calcula la retención de IRPF siguiendo el esquema de retenciones de la AEAT para un soltero sin hijos (Seguridad Social, gastos
   deducibles, reducción por rendimientos del trabajo y escala progresiva). Desde el mes puedes copiar ese
   porcentaje con «Estimar».
+- **Compartir el mes.** Genera en tu dispositivo una imagen con el resumen (con o sin importes, para compartir solo
+  las guardias) y la envía con el menú de compartir del móvil, la descarga o copia el resumen como texto.
 - **Historial.** Gráfico del líquido por mes, acumulado y media mensual.
 - **App instalable (PWA).** Añádela a la pantalla de inicio y funciona sin conexión; te avisa cuando hay una
   versión nueva.
@@ -40,9 +46,9 @@ tarifas del Anexo XVI de Retribuciones del SAS.
 
 <p align="center">
   <img src="docs/screenshots/festivos.png" width="23%" alt="Calendario de abril con los festivos marcados" />
+  <img src="docs/screenshots/compartir.png" width="23%" alt="Vista previa para compartir el resumen del mes" />
   <img src="docs/screenshots/historial.png" width="23%" alt="Historial de meses con gráfico" />
   <img src="docs/screenshots/mes-oscuro.png" width="23%" alt="Modo oscuro" />
-  <img src="docs/screenshots/info.png" width="23%" alt="Información y copia de seguridad" />
 </p>
 
 ## Privacidad
@@ -71,11 +77,13 @@ src/
 │   ├── holidays.ts       # Festivos de Andalucía y Granada (Semana Santa, traslados…)
 │   ├── irpf.ts           # Estimación de la retención de IRPF
 │   ├── year.ts           # Proyección del año natural a partir de los meses guardados
+│   ├── share.ts          # Imagen y texto del resumen del mes para compartir
 │   ├── storage.ts        # Persistencia en localStorage + validación de datos importados
 │   ├── useStore.ts       # Estado de la app (meses, mes activo, acciones)
 │   └── *.test.ts
 ├── components/           # UI: una pantalla o tarjeta por archivo
 └── App.tsx               # Pestañas y composición
+e2e/                      # Tests end-to-end (Playwright) y de accesibilidad (axe)
 ```
 
 La lógica de negocio vive en `src/lib/calc.ts` como funciones puras: recibe la configuración de un mes y devuelve los
@@ -88,11 +96,23 @@ Requiere Node 20 o superior.
 ```bash
 npm install
 npm run dev           # servidor de desarrollo
-npm test              # tests de la lógica (cálculo, festivos, IRPF, proyección) y del almacenamiento
+npm test              # tests unitarios: cálculo, festivos, IRPF, proyección, almacenamiento, compartir
+npm run e2e           # tests end-to-end y de accesibilidad (WCAG A/AA, en claro y oscuro)
 npm run lint          # ESLint
 npm run format        # Prettier
 npm run build         # comprobación de tipos + build de producción en dist/
 ```
+
+### Calidad
+
+- **Unitarios (Vitest):** toda la lógica de negocio es pura y está en `src/lib`.
+- **End-to-end (Playwright, emulando un Pixel 7):** marcar guardias, festivos, cambio de mes, historial, año,
+  copia de seguridad (exportar → borrar → importar), compartir, uso sin conexión y datos corruptos.
+- **Accesibilidad (axe-core):** cada pestaña y el panel del día, en tema claro y oscuro, sin violaciones WCAG A/AA.
+- **CI:** cada push ejecuta lint, formato, tests, build y e2e. Dependabot mantiene las dependencias al día.
+
+La primera vez que ejecutes los e2e instala el navegador con `npx playwright install chromium`. Si ya tienes un
+Chromium, puedes indicarlo con la variable `CHROMIUM_PATH`.
 
 ## Despliegue
 
@@ -104,6 +124,11 @@ Cada push a `main` ejecuta lint, tests y build en GitHub Actions y publica `dist
 Es una estimación **orientativa**, basada en nóminas reales de junio a agosto de 2026 y en el Anexo XVI de
 Retribuciones del SAS. El IRPF a partir de R2 depende de tu situación personal. Verifica siempre el importe
 definitivo con tu nómina o con RRHH.
+
+## Errores y sugerencias
+
+Abre una [issue](https://github.com/Marodseg/calculadora-sueldo-resi/issues). Si algún importe no coincide con tu
+nómina real, indica el mes, el año de residencia y la diferencia: es lo que más ayuda a afinar el cálculo.
 
 ## Licencia
 

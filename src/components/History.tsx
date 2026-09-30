@@ -50,7 +50,7 @@ export function History({ store, onOpen }: { store: Store; onOpen: (month: strin
 
       <section className="card">
         <h2 className="card-title">Líquido por mes</h2>
-        <div className="bars" role="img" aria-label="Gráfico de líquido por mes">
+        <div className="bars" role="group" aria-label="Líquido por mes">
           {last12.map((r) => (
             <button
               key={r.k}

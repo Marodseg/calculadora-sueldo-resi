@@ -3,8 +3,8 @@
   --surface: #ffffff;
   --surface-2: #eaeee9;
   --ink: #14211c;
-  --ink-2: #566860;
-  --ink-3: #8a9a92;
+  --ink-2: #4b5c54;
+  --ink-3: #5a6a61;
   --line: #dde3dc;
   --brand: #0f766e;
   --brand-2: #10b981;
@@ -39,8 +39,8 @@
     --surface: #151d19;
     --surface-2: #1d2722;
     --ink: #eef3ef;
-    --ink-2: #a3b3ab;
-    --ink-3: #6f8078;
+    --ink-2: #b3c2ba;
+    --ink-3: #93a49b;
     --line: #26332d;
     --brand: #34d3b4;
     --brand-2: #10b981;
@@ -1681,4 +1681,24 @@ summary:focus-visible {
 .btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
+}
+
+/* --- pantalla de error --- */
+.error-screen {
+  max-width: 420px;
+  margin: 0 auto;
+  padding: 20vh 24px 24px;
+  text-align: center;
+}
+.error-screen h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+}
+.error-screen p {
+  margin: 0 0 20px;
+  color: var(--ink-2);
+}
+.error-screen a {
+  color: var(--brand);
+  font-weight: 700;
 }

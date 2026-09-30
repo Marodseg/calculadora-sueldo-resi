@@ -73,7 +73,7 @@ export function YearView({ store, onOpen }: { store: Store; onOpen: (month: stri
 
           <section className="card">
             <h2 className="card-title">Líquido mes a mes</h2>
-            <div className="bars year" role="img" aria-label={`Líquido de cada mes de ${year}`}>
+            <div className="bars year" role="group" aria-label={`Líquido de cada mes de ${year}`}>
               {p.months.map((mo) => {
                 const bar = (
                   <>
@@ -90,7 +90,12 @@ export function YearView({ store, onOpen }: { store: Store; onOpen: (month: stri
                   </>
                 );
                 return mo.projected ? (
-                  <div key={mo.key} className="bar-col static">
+                  <div
+                    key={mo.key}
+                    className="bar-col static"
+                    role="img"
+                    aria-label={`${monthLabel(mo.key)}: ${mo.neto > 0 ? fmtEur(mo.neto) : "sin datos"} (estimado)`}
+                  >
                     {bar}
                   </div>
                 ) : (

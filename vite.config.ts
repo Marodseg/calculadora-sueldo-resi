@@ -31,11 +31,11 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
-        // Solo el subconjunto latino de las fuentes (cubre el español); el resto no se precachea.
-        globIgnores: ["**/*-{cyrillic,cyrillic-ext,greek,vietnamese,latin-ext}-*.woff2"],
+        // Solo el subconjunto latino de las fuentes (cubre el español); tampoco se precachea la imagen para compartir.
+        globIgnores: ["**/*-{cyrillic,cyrillic-ext,greek,vietnamese,latin-ext}-*.woff2", "og.png"],
         navigateFallback: "index.html",
       },
     }),
   ],
-  test: { environment: "node" },
+  test: { environment: "node", include: ["src/**/*.test.ts"] },
 });
