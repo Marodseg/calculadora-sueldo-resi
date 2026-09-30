@@ -62,3 +62,21 @@ describe("meses y arrastre", () => {
     expect(computeTotals("2026-10", cfg).extrasBruto).toBe(Math.round(8 * 15.78 * 100) / 100);
   });
 });
+
+describe("festivos en el cálculo", () => {
+  it("un festivo entre semana cuenta como fin de semana/festivo para la guardia", () => {
+    const cfg = newMonthConfig("R1");
+    cfg.days[2] = { guardia: { mode: "17", customHours: 17 } }; // jueves 2 abr 2026 = Jueves Santo
+    const t = computeTotals("2026-04", cfg);
+    expect(t.buckets.sdf).toBe(9 + 8); // 9 h del festivo + 8 h del Viernes Santo (también festivo)
+    expect(t.buckets.lab).toBe(0);
+  });
+
+  it("los festivos no reducen los días trabajados (se cobra el sueldo completo)", () => {
+    expect(computeTotals("2026-04", newMonthConfig("R1")).workedDays).toBe(30);
+  });
+
+  it("las horas arrastradas del mes anterior usan la tarifa de festivo si el día 1 lo es", () => {
+    expect(nextMonthFirstDayType("2026-12")).toBe("sdf"); // 1 ene 2027 = festivo (viernes)
+  });
+});

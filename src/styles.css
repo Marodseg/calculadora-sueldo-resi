@@ -20,6 +20,7 @@
   --vac-ink: #0b4a1e;
   --baja: #f6b1a9;
   --baja-ink: #7d1d16;
+  --holiday: #c2410c;
   --lab-acc: #8a9a92;
   --sdf-acc: #2f7fd1;
   --esp-acc: #e0930a;
@@ -55,6 +56,7 @@
     --vac-ink: #d9f7df;
     --baja: #7d2b25;
     --baja-ink: #ffdcd7;
+    --holiday: #fb923c;
     --lab-acc: #6f8078;
     --sdf-acc: #5aa9f5;
     --esp-acc: #f0b23a;
@@ -1512,4 +1514,49 @@ summary:focus-visible {
   font-size: 12.5px;
   color: var(--brand-soft-ink);
   opacity: 0.85;
+}
+
+/* --- festivos --- */
+.cell-hol {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--holiday);
+}
+.lg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--holiday);
+  margin: 0 2px;
+}
+.holidays-line {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-size: 12.5px;
+  color: var(--ink-2);
+}
+.holidays-line b {
+  color: var(--holiday);
+}
+.sheet-holiday {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 6px 0 0;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--brand-soft);
+  color: var(--brand-soft-ink);
+  font-size: 12px;
+  font-weight: 700;
 }

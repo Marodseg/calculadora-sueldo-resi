@@ -1,3 +1,4 @@
+import { holidaysOfMonth } from "./holidays";
 import { EMPRESA, MIN_CC, RATES, SS, SUELDO_BASE } from "./rates";
 import type { DayOverride, DayView, MonthConfig, PayType } from "./types";
 
@@ -31,14 +32,17 @@ export function firstWeekday(key: string) {
 export function buildDays(key: string, overrides: Record<number, DayOverride>): DayView[] {
   const { y, m } = parseMonth(key);
   const count = new Date(y, m, 0).getDate();
+  const holidays = holidaysOfMonth(key);
   const out: DayView[] = [];
   for (let n = 1; n <= count; n++) {
     const weekday = new Date(y, m - 1, n).getDay();
     const isWeekend = weekday === 0 || weekday === 6;
+    const holiday = holidays[n];
+    const defaultType = isWeekend || holiday ? "sdf" : "lab";
     const o = overrides[n];
-    const type = o?.type ?? (isWeekend ? "sdf" : "lab");
+    const type = o?.type ?? defaultType;
     const absent = type === "vac" || type === "baja";
-    out.push({ n, weekday, isWeekend, type, guardia: absent ? null : (o?.guardia ?? null) });
+    out.push({ n, weekday, isWeekend, holiday, defaultType, type, guardia: absent ? null : (o?.guardia ?? null) });
   }
   return out;
 }
@@ -51,7 +55,8 @@ export interface GuardiaSplit {
   deferred: number;
 }
 
-const asPay = (d: DayView): PayType => (d.type === "vac" || d.type === "baja" ? (d.isWeekend ? "sdf" : "lab") : d.type);
+/** Tarifa de un día: si está de vacaciones o de baja se paga según su tipo por defecto (fin de semana/festivo o laborable). */
+const asPay = (d: DayView): PayType => (d.type === "vac" || d.type === "baja" ? d.defaultType : d.type);
 
 /** Reparte las horas de una guardia que empieza en `idx` entre el día de inicio y el siguiente (corte a medianoche). */
 export function splitGuardia(days: DayView[], idx: number): GuardiaSplit {
@@ -75,8 +80,9 @@ export function deferredHours(key: string, cfg: MonthConfig) {
 /** Tipo de tarifa del primer día del mes siguiente (para las horas arrastradas). */
 export function nextMonthFirstDayType(key: string): PayType {
   const { y, m } = parseMonth(key);
-  const wd = new Date(y, m, 1).getDay();
-  return wd === 0 || wd === 6 ? "sdf" : "lab";
+  const next = shiftMonth(key, 1);
+  const isWeekend = [0, 6].includes(new Date(y, m, 1).getDay());
+  return isWeekend || holidaysOfMonth(next)[1] ? "sdf" : "lab";
 }
 
 export interface Totals {

@@ -11,6 +11,7 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
   const today = new Date();
   const isThisMonth = month === currentMonthKey();
   const guardias = days.filter((d) => d.guardia).length;
+  const holidays = days.filter((d) => d.holiday);
   const worked = days.filter((d) => d.type !== "vac" && d.type !== "baja").length;
 
   return (
@@ -49,8 +50,9 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
                 e.currentTarget.blur();
                 onPick(d.n);
               }}
-              aria-label={`Día ${d.n}, ${DAY_TYPE_SHORT[d.type]}${d.guardia ? ", con guardia" : ""}`}
+              aria-label={`Día ${d.n}, ${DAY_TYPE_SHORT[d.type]}${d.holiday ? `, festivo: ${d.holiday}` : ""}${d.guardia ? ", con guardia" : ""}`}
             >
+              {d.holiday && <span className="cell-hol" aria-hidden="true" />}
               <span className="cell-n">{d.n}</span>
               {d.guardia ? (
                 <span className="cell-g">
@@ -85,8 +87,24 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
           <i className="lg t-baja" />
           Baja
         </span>
+        <span>
+          <i className="lg-dot" />
+          Festivo
+        </span>
       </div>
-      <p className="hint">Toca un día para marcar guardia, festivo, vacaciones o baja.</p>
+      {holidays.length > 0 && (
+        <ul className="holidays-line" aria-label="Festivos del mes">
+          {holidays.map((d) => (
+            <li key={d.n}>
+              <b className="mono">{d.n}</b> {d.holiday}
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="hint">
+        Toca un día para marcar guardia, festivo especial, vacaciones o baja. Los festivos de Andalucía y Granada se
+        cuentan ya como fin de semana/festivo (orientativo: confirma el calendario oficial).
+      </p>
     </section>
   );
 }

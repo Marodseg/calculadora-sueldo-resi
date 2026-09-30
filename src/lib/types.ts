@@ -46,6 +46,10 @@ export interface DayView {
   n: number;
   weekday: number; // 0 = domingo
   isWeekend: boolean;
+  /** Nombre del festivo (Andalucía / Granada) si lo es. */
+  holiday?: string;
+  /** Tipo por defecto del día: fin de semana o festivo -> "sdf", el resto "lab". */
+  defaultType: "lab" | "sdf";
   type: DayType;
   guardia: Guardia | null;
 }

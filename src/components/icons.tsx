@@ -22,4 +22,5 @@ export {
   TrendingUp as IconTrend,
   ArrowRight as IconArrow,
   Smartphone as IconSmartphone,
+  Flag as IconFlag,
 } from "lucide-react";

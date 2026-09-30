@@ -4,7 +4,7 @@ import { Drawer } from "vaul";
 import { buildDays, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_LABEL } from "../lib/rates";
 import type { DayOverride, DayType, DayView, Guardia, GuardiaMode, MonthConfig } from "../lib/types";
-import { IconClose, IconMoon, IconWarn } from "./icons";
+import { IconClose, IconFlag, IconMoon, IconWarn } from "./icons";
 import { Toggle } from "./ui";
 
 /** Duración de la animación de cierre de vaul (0,5 s) más un pequeño margen. */
@@ -66,7 +66,7 @@ function SheetBody({ day, days, cfg, onClose, onChange }: BodyProps) {
   const view = days[day - 1];
   const stored = cfg.days[day];
   const absent = view.type === "vac" || view.type === "baja";
-  const defaultType: DayType = view.isWeekend ? "sdf" : "lab";
+  const defaultType = view.defaultType;
   const split = view.guardia ? splitGuardia(days, day - 1) : null;
 
   const setType = (type: DayType) => {
@@ -88,6 +88,11 @@ function SheetBody({ day, days, cfg, onClose, onChange }: BodyProps) {
         <div>
           <Drawer.Title className="sheet-day">{day}</Drawer.Title>
           <p className="sheet-wd">{WEEKDAYS[view.weekday]}</p>
+          {view.holiday && (
+            <p className="sheet-holiday">
+              <IconFlag size={13} /> {view.holiday}
+            </p>
+          )}
         </div>
         <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
           <IconClose size={18} />
