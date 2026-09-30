@@ -1,10 +1,14 @@
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
+import { useEffect, useRef } from "react";
 import { Drawer } from "vaul";
 import { buildDays, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_LABEL } from "../lib/rates";
 import type { DayOverride, DayType, DayView, Guardia, GuardiaMode, MonthConfig } from "../lib/types";
 import { IconClose, IconMoon, IconWarn } from "./icons";
 import { Toggle } from "./ui";
+
+/** Duración de la animación de cierre de vaul (0,5 s) más un pequeño margen. */
+const CLOSE_ANIMATION_MS = 550;
 
 const WEEKDAYS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const DAY_TYPES: DayType[] = ["lab", "sdf", "esp", "vac", "baja"];
@@ -25,11 +29,27 @@ interface Props {
 
 export function DaySheet({ month, cfg, day, onClose, onChange }: Props) {
   const days = day !== null ? buildDays(month, cfg.days) : [];
+  const lastDay = useRef<number | null>(null);
+
+  // Devolver el foco a la celda solo cuando el panel ya se ha cerrado del todo: mientras dura la animación,
+  // Radix mantiene aria-hidden sobre el resto de la app y un foco ahí dentro sería inaccesible.
+  useEffect(() => {
+    if (day !== null) {
+      lastDay.current = day;
+      return;
+    }
+    if (lastDay.current === null) return;
+    const timer = setTimeout(() => {
+      document.querySelector<HTMLElement>(`[data-day="${lastDay.current}"]`)?.focus({ preventScroll: true });
+    }, CLOSE_ANIMATION_MS);
+    return () => clearTimeout(timer);
+  }, [day]);
+
   return (
     <Drawer.Root open={day !== null} onOpenChange={(open) => !open && onClose()}>
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
-        <Drawer.Content className="sheet" aria-describedby={undefined}>
+        <Drawer.Content className="sheet" aria-describedby={undefined} onCloseAutoFocus={(e) => e.preventDefault()}>
           {day !== null && <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />}
         </Drawer.Content>
       </Drawer.Portal>

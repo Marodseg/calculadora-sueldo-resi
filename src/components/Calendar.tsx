@@ -43,7 +43,12 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
             <button
               key={d.n}
               className={`cell t-${d.type}${d.isWeekend ? " weekend" : ""}${d.guardia ? " has-g" : ""}${isThisMonth && d.n === today.getDate() ? " today" : ""}`}
-              onClick={() => onPick(d.n)}
+              data-day={d.n}
+              onClick={(e) => {
+                // Sin foco previo en la celda: el panel modal oculta el resto de la app con aria-hidden.
+                e.currentTarget.blur();
+                onPick(d.n);
+              }}
               aria-label={`Día ${d.n}, ${DAY_TYPE_SHORT[d.type]}${d.guardia ? ", con guardia" : ""}`}
             >
               <span className="cell-n">{d.n}</span>
