@@ -76,51 +76,53 @@ export function ShareSheet({ store, open, onOpenChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet share-sheet" aria-describedby={undefined}>
-          <div className="sheet-grab" />
-          <div className="sheet-head">
-            <Drawer.Title className="share-title">Compartir resumen</Drawer.Title>
-            <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
-              <IconClose size={18} />
-            </button>
-          </div>
-
-          <div className="share-preview">
-            {image ? (
-              <img src={image.url} alt="Vista previa del resumen del mes" />
-            ) : (
-              <div className="share-skeleton" />
-            )}
-          </div>
-
-          <div className="g-row">
-            <div>
-              <p className="sheet-label" style={{ margin: 0 }}>
-                Incluir importes
-              </p>
-              <p className="g-sub">Desactívalo para compartir solo las guardias</p>
+          <div className="sheet-body">
+            <div className="sheet-grab" />
+            <div className="sheet-head">
+              <Drawer.Title className="share-title">Compartir resumen</Drawer.Title>
+              <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
+                <IconClose size={18} />
+              </button>
             </div>
-            <Toggle label="Incluir importes" checked={showAmounts} onChange={setShowAmounts} />
-          </div>
 
-          <div className="share-actions">
-            <button className="primary-btn" onClick={() => void share()} disabled={!image}>
-              {canShareFiles ? (
-                <>
-                  <IconShare size={18} /> Compartir imagen
-                </>
+            <div className="share-preview">
+              {image ? (
+                <img src={image.url} alt="Vista previa del resumen del mes" />
               ) : (
-                <>
-                  <IconDownload size={18} /> Guardar imagen
-                </>
+                <div className="share-skeleton" />
               )}
-            </button>
-            <div className="btn-pair" style={{ margin: 0 }}>
-              <button className="btn" onClick={() => void copyText()}>
-                <IconCopy size={16} /> Copiar texto
+            </div>
+
+            <div className="g-row">
+              <div>
+                <p className="sheet-label" style={{ margin: 0 }}>
+                  Incluir importes
+                </p>
+                <p className="g-sub">Desactívalo para compartir solo las guardias</p>
+              </div>
+              <Toggle label="Incluir importes" checked={showAmounts} onChange={setShowAmounts} />
+            </div>
+
+            <div className="share-actions">
+              <button className="primary-btn" onClick={() => void share()} disabled={!image}>
+                {canShareFiles ? (
+                  <>
+                    <IconShare size={18} /> Compartir imagen
+                  </>
+                ) : (
+                  <>
+                    <IconDownload size={18} /> Guardar imagen
+                  </>
+                )}
               </button>
-              <button className="btn" onClick={() => image && downloadBlob(image.blob, filename)} disabled={!image}>
-                <IconDownload size={16} /> Descargar
-              </button>
+              <div className="btn-pair" style={{ margin: 0 }}>
+                <button className="btn" onClick={() => void copyText()}>
+                  <IconCopy size={16} /> Copiar texto
+                </button>
+                <button className="btn" onClick={() => image && downloadBlob(image.blob, filename)} disabled={!image}>
+                  <IconDownload size={16} /> Descargar
+                </button>
+              </div>
             </div>
           </div>
         </Drawer.Content>

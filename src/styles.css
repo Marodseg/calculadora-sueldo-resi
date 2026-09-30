@@ -941,15 +941,24 @@ summary:focus-visible {
   max-width: 560px;
   background: var(--surface);
   border-radius: 26px 26px 0 0;
-  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
   max-height: 92dvh;
-  overflow-y: auto;
+  /* El desplazamiento va en .sheet-body: vaul añade a este elemento un ::after de 200 % de alto que,
+     con overflow aquí, alargaría el scroll con un hueco en blanco al final. */
+  display: flex;
+  flex-direction: column;
   animation: slide 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 @keyframes slide {
   from {
     transform: translateY(100%);
   }
+}
+.sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 8px 18px calc(18px + env(safe-area-inset-bottom));
 }
 .sheet-grab {
   width: 40px;
@@ -959,6 +968,12 @@ summary:focus-visible {
   margin: 0 auto 10px;
 }
 .sheet-head {
+  /* Se queda fijo arriba al desplazar el panel, para no perder el botón de cerrar. */
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--surface);
+  padding-block: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;

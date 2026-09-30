@@ -100,83 +100,85 @@ export function CalendarExportSheet({ store, open, onOpenChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet" aria-describedby={undefined}>
-          <div className="sheet-grab" />
-          <div className="sheet-head">
-            <Drawer.Title className="share-title">Añadir a mi calendario</Drawer.Title>
-            <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
-              <IconClose size={18} />
-            </button>
-          </div>
-
-          <p className="sheet-label">Qué exportar</p>
-          <ToggleGroup.Root
-            type="single"
-            className="seg"
-            value={scope}
-            onValueChange={(value) => value && setScope(value as Scope)}
-          >
-            <ToggleGroup.Item value="month" className="seg-item">
-              <b>Este mes</b>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="year" className="seg-item">
-              <b>Año {year}</b>
-            </ToggleGroup.Item>
-            <ToggleGroup.Item value="all" className="seg-item">
-              <b>Todo</b>
-              <small>meses guardados</small>
-            </ToggleGroup.Item>
-          </ToggleGroup.Root>
-
-          <div className="option-list">
-            <OptionRow title="Guardias" hint="Con su horario real" checked={guardias} onChange={setGuardias} />
-            <OptionRow
-              title="Vacaciones y bajas"
-              hint="Un evento por periodo"
-              checked={ausencias}
-              onChange={setAusencias}
-            />
-            <OptionRow
-              title="Festivos"
-              hint="Andalucía y Granada, de día completo"
-              checked={festivos}
-              onChange={setFestivos}
-            />
-          </div>
-
-          <div className="g-row option-row">
-            <div>
-              <p className="sheet-label" style={{ margin: 0 }}>
-                Recordatorio
-              </p>
-              <p className="g-sub">Aviso antes de cada guardia</p>
-            </div>
-            <div style={{ width: 150 }}>
-              <Dropdown label="Recordatorio" value={reminder} onChange={setReminder} options={REMINDERS} />
-            </div>
-          </div>
-
-          <p className="hint" role="status">
-            {ics.events === 0
-              ? "No hay nada que exportar con estas opciones."
-              : `${ics.events} ${ics.events === 1 ? "evento" : "eventos"} · sin importes ni datos personales.`}
-          </p>
-
-          <div className="share-actions">
-            <button className="primary-btn" onClick={download} disabled={ics.events === 0}>
-              <IconDownload size={18} /> Descargar .ics
-            </button>
-            {canShareFile && (
-              <button className="btn" onClick={() => void share()} disabled={ics.events === 0}>
-                <IconShare size={16} /> Compartir archivo
+          <div className="sheet-body">
+            <div className="sheet-grab" />
+            <div className="sheet-head">
+              <Drawer.Title className="share-title">Añadir a mi calendario</Drawer.Title>
+              <button className="icon-btn" onClick={() => onOpenChange(false)} aria-label="Cerrar">
+                <IconClose size={18} />
               </button>
-            )}
-          </div>
+            </div>
 
-          <p className="hint">
-            Ábrelo con Google Calendar, Apple Calendar u Outlook. Si vuelves a exportar, en la mayoría de calendarios
-            los eventos se actualizan en vez de duplicarse. Consejo: impórtalo a un calendario propio para poder
-            borrarlo entero si algo cambia.
-          </p>
+            <p className="sheet-label">Qué exportar</p>
+            <ToggleGroup.Root
+              type="single"
+              className="seg"
+              value={scope}
+              onValueChange={(value) => value && setScope(value as Scope)}
+            >
+              <ToggleGroup.Item value="month" className="seg-item">
+                <b>Este mes</b>
+              </ToggleGroup.Item>
+              <ToggleGroup.Item value="year" className="seg-item">
+                <b>Año {year}</b>
+              </ToggleGroup.Item>
+              <ToggleGroup.Item value="all" className="seg-item">
+                <b>Todo</b>
+                <small>meses guardados</small>
+              </ToggleGroup.Item>
+            </ToggleGroup.Root>
+
+            <div className="option-list">
+              <OptionRow title="Guardias" hint="Con su horario real" checked={guardias} onChange={setGuardias} />
+              <OptionRow
+                title="Vacaciones y bajas"
+                hint="Un evento por periodo"
+                checked={ausencias}
+                onChange={setAusencias}
+              />
+              <OptionRow
+                title="Festivos"
+                hint="Andalucía y Granada, de día completo"
+                checked={festivos}
+                onChange={setFestivos}
+              />
+            </div>
+
+            <div className="g-row option-row">
+              <div>
+                <p className="sheet-label" style={{ margin: 0 }}>
+                  Recordatorio
+                </p>
+                <p className="g-sub">Aviso antes de cada guardia</p>
+              </div>
+              <div style={{ width: 150 }}>
+                <Dropdown label="Recordatorio" value={reminder} onChange={setReminder} options={REMINDERS} />
+              </div>
+            </div>
+
+            <p className="hint" role="status">
+              {ics.events === 0
+                ? "No hay nada que exportar con estas opciones."
+                : `${ics.events} ${ics.events === 1 ? "evento" : "eventos"} · sin importes ni datos personales.`}
+            </p>
+
+            <div className="share-actions">
+              <button className="primary-btn" onClick={download} disabled={ics.events === 0}>
+                <IconDownload size={18} /> Descargar .ics
+              </button>
+              {canShareFile && (
+                <button className="btn" onClick={() => void share()} disabled={ics.events === 0}>
+                  <IconShare size={16} /> Compartir archivo
+                </button>
+              )}
+            </div>
+
+            <p className="hint">
+              Ábrelo con Google Calendar, Apple Calendar u Outlook. Si vuelves a exportar, en la mayoría de calendarios
+              los eventos se actualizan en vez de duplicarse. Consejo: impórtalo a un calendario propio para poder
+              borrarlo entero si algo cambia.
+            </p>
+          </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>

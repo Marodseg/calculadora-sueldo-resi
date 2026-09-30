@@ -225,6 +225,38 @@ test.describe("calendario (.ics)", () => {
   });
 });
 
+test.describe("paneles en pantallas bajas", () => {
+  // Móvil con la barra del navegador visible: el contenido no cabe y hay que poder desplazarse hasta el final.
+  test.use({ viewport: { width: 360, height: 600 } });
+
+  test.beforeEach(async ({ page }) => {
+    await seed(page);
+  });
+
+  for (const [name, opener, lastText] of [
+    ["calendario", "Al calendario", /Consejo: impórtalo/],
+    ["compartir", "Compartir resumen", /Descargar/],
+  ] as const) {
+    test(`el panel de ${name} permite leer hasta el final`, async ({ page }) => {
+      await page.goto("./");
+      await page.getByRole("button", { name: "Nómina", exact: true }).click();
+      await page.getByRole("button", { name: opener }).click();
+      const body = page.locator(".sheet-body");
+      await expect(body).toBeVisible();
+
+      await body.evaluate((el) => (el.scrollTop = el.scrollHeight));
+      await expect(page.locator(".sheet-body").getByText(lastText).last()).toBeInViewport({ ratio: 1 });
+
+      // Sin "hueco" en blanco: el contenido desplazable no es mucho más alto que el visible.
+      const { scrollHeight, clientHeight } = await body.evaluate((el) => ({
+        scrollHeight: el.scrollHeight,
+        clientHeight: el.clientHeight,
+      }));
+      expect(scrollHeight - clientHeight).toBeLessThan(400);
+    });
+  }
+});
+
 test.describe("PWA", () => {
   test.use({ serviceWorkers: "allow" });
 

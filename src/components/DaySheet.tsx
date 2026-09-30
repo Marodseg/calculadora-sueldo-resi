@@ -50,7 +50,11 @@ export function DaySheet({ month, cfg, day, onClose, onChange }: Props) {
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet" aria-describedby={undefined} onCloseAutoFocus={(e) => e.preventDefault()}>
-          {day !== null && <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />}
+          {day !== null && (
+            <div className="sheet-body">
+              <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />
+            </div>
+          )}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
