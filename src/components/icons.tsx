@@ -21,4 +21,5 @@ export {
   RotateCcw as IconReset,
   TrendingUp as IconTrend,
   ArrowRight as IconArrow,
+  Smartphone as IconSmartphone,
 } from "lucide-react";

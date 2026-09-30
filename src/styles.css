@@ -80,6 +80,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family:
+    "Plus Jakarta Sans Variable",
     "Plus Jakarta Sans",
     system-ui,
     -apple-system,
@@ -106,7 +107,7 @@ summary:focus-visible {
   outline-offset: 2px;
 }
 .mono {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
   font-variant-numeric: tabular-nums;
 }
 
@@ -627,7 +628,7 @@ summary:focus-visible {
   padding: 9px 10px;
   font-size: 18px;
   font-weight: 700;
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
 }
 .pct-input span {
   font-weight: 800;
@@ -854,7 +855,7 @@ summary:focus-visible {
   padding: 7px 6px;
   text-align: right;
   border-bottom: 1px solid var(--line);
-  font-family: "JetBrains Mono", monospace;
+  font-family: "JetBrains Mono Variable", "JetBrains Mono", monospace;
 }
 .rate-table th:first-child,
 .rate-table td:first-child {
@@ -1477,4 +1478,38 @@ summary:focus-visible {
   background: var(--acc);
   margin-right: 8px;
   flex-shrink: 0;
+}
+
+/* --- instalar como app --- */
+.install-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--brand-soft);
+  border-color: transparent;
+}
+.install-ico {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+.install-text {
+  flex: 1;
+  min-width: 0;
+}
+.install-text h2 {
+  margin: 0;
+  font-size: 14.5px;
+  color: var(--brand-soft-ink);
+}
+.install-text p {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--brand-soft-ink);
+  opacity: 0.85;
 }

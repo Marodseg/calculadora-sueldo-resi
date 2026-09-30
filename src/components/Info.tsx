@@ -4,11 +4,13 @@ import { backupFilename, downloadJson } from "../lib/backup";
 import { fmtNum } from "../lib/calc";
 import { MIN_CC, RATES, YEARS } from "../lib/rates";
 import type { Store } from "../lib/useStore";
-import { IconDownload, IconTrash, IconUpload } from "./icons";
+import { useInstall } from "../lib/usePwa";
+import { IconDownload, IconSmartphone, IconTrash, IconUpload } from "./icons";
 import { Acc, Confirm } from "./ui";
 
 export function Info({ store }: { store: Store }) {
   const fileInput = useRef<HTMLInputElement>(null);
+  const pwa = useInstall();
 
   const exportBackup = () => {
     downloadJson(store.exportJson(), backupFilename());
@@ -26,6 +28,27 @@ export function Info({ store }: { store: Store }) {
 
   return (
     <>
+      {!pwa.installed && (pwa.canPrompt || pwa.showIosHint) && (
+        <section className="card install-card">
+          <span className="install-ico">
+            <IconSmartphone size={22} />
+          </span>
+          <div className="install-text">
+            <h2>Instálala en tu móvil</h2>
+            <p>
+              {pwa.canPrompt
+                ? "Ábrela desde el icono de inicio, a pantalla completa y sin conexión."
+                : "En Safari: Compartir → «Añadir a pantalla de inicio»."}
+            </p>
+          </div>
+          {pwa.canPrompt && (
+            <button className="chip-btn solid" onClick={() => void pwa.install()}>
+              Instalar
+            </button>
+          )}
+        </section>
+      )}
+
       <section className="card">
         <h2 className="card-title">Copia de seguridad</h2>
         <p className="hint" style={{ marginTop: 0 }}>
