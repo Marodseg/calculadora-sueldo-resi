@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { computeTotals, currentMonthKey, deferredHours, nextMonthFirstDayType, shiftMonth } from "./calc";
-import { loadData, newMonthConfig, sanitize, saveData } from "./storage";
+import { emptyData, loadData, newMonthConfig, sanitize, saveData } from "./storage";
 import type { AppData, DayOverride, ExtraHours, MonthConfig, Year } from "./types";
 
-const uid = () => Math.random().toString(36).slice(2, 9);
+const uid = () => crypto.randomUUID();
 
 export function useStore() {
   const [data, setData] = useState<AppData>(loadData);
@@ -20,16 +20,12 @@ export function useStore() {
     return newMonthConfig(prev?.year ?? data.lastYear, prev?.irpfPct ?? null);
   }, [data, month]);
 
-  const update = useCallback(
-    (fn: (c: MonthConfig) => MonthConfig) => {
-      setData((d) => {
-        const base = d.months[month] ?? cfg;
-        const next = { ...fn(base), updatedAt: Date.now() };
-        return { ...d, lastYear: next.year, months: { ...d.months, [month]: next } };
-      });
-    },
-    [month, cfg],
-  );
+  /** Aplica un cambio al mes activo y lo persiste (el primer cambio "materializa" el mes). */
+  const update = (fn: (c: MonthConfig) => MonthConfig) =>
+    setData((d) => {
+      const next = { ...fn(d.months[month] ?? cfg), updatedAt: Date.now() };
+      return { ...d, lastYear: next.year, months: { ...d.months, [month]: next } };
+    });
 
   const setYear = (year: Year) => update((c) => ({ ...c, year }));
   const setIrpf = (irpfPct: number | null) => update((c) => ({ ...c, irpfPct }));
@@ -45,18 +41,13 @@ export function useStore() {
     update((c) => ({ ...c, extras: c.extras.map((e) => (e.id === id ? { ...e, ...p } : e)) }));
   const removeExtra = (id: string) => update((c) => ({ ...c, extras: c.extras.filter((e) => e.id !== id) }));
   const dismissCarry = () => update((c) => ({ ...c, carryDismissed: true }));
-  const resetMonth = () =>
-    setData((d) => {
-      const months = { ...d.months };
-      delete months[month];
-      return { ...d, months };
-    });
   const deleteMonth = (key: string) =>
     setData((d) => {
       const months = { ...d.months };
       delete months[key];
       return { ...d, months };
     });
+  const resetMonth = () => deleteMonth(month);
 
   /** Sugerencia de horas de guardia del último día del mes anterior. */
   const carry = useMemo(() => {
@@ -76,12 +67,27 @@ export function useStore() {
     if (!d) throw new Error("Archivo no válido");
     setData(d);
   };
-  const clearAll = () => setData({ version: 1, months: {}, lastYear: "R1" });
+  const clearAll = () => setData(emptyData());
 
   return {
-    data, month, setMonth, cfg, totals, carry,
-    setYear, setIrpf, setDay, addExtra, patchExtra, removeExtra, dismissCarry, resetMonth, deleteMonth,
-    exportJson, importJson, clearAll,
+    data,
+    month,
+    setMonth,
+    cfg,
+    totals,
+    carry,
+    setYear,
+    setIrpf,
+    setDay,
+    addExtra,
+    patchExtra,
+    removeExtra,
+    dismissCarry,
+    resetMonth,
+    deleteMonth,
+    exportJson,
+    importJson,
+    clearAll,
   };
 }
 export type Store = ReturnType<typeof useStore>;

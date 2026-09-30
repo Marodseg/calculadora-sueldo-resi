@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeTotals, deferredHours, estimateIrpf } from "./calc";
+import { computeTotals, deferredHours, estimateIrpf, nextMonthFirstDayType, shiftMonth } from "./calc";
 import { newMonthConfig } from "./storage";
 
 describe("calculadora", () => {
@@ -42,5 +42,23 @@ describe("calculadora", () => {
     expect(computeTotals("2026-09", r1).irpfAmount).toBe(0);
     expect(computeTotals("2026-09", r2).irpfAmount).toBeGreaterThan(0);
     expect(estimateIrpf(0)).toBe(0);
+  });
+});
+
+describe("meses y arrastre", () => {
+  it("shiftMonth cruza el cambio de año", () => {
+    expect(shiftMonth("2026-01", -1)).toBe("2025-12");
+    expect(shiftMonth("2026-12", 1)).toBe("2027-01");
+  });
+
+  it("las horas arrastradas cobran a la tarifa del primer día del mes siguiente", () => {
+    expect(nextMonthFirstDayType("2026-09")).toBe("lab"); // 1 oct 2026 = jueves
+    expect(nextMonthFirstDayType("2026-07")).toBe("sdf"); // 1 ago 2026 = sábado
+  });
+
+  it("las horas extra entran en el bruto a su tarifa", () => {
+    const cfg = newMonthConfig("R1");
+    cfg.extras.push({ id: "x", hours: 8, type: "sdf" });
+    expect(computeTotals("2026-10", cfg).extrasBruto).toBe(Math.round(8 * 15.78 * 100) / 100);
   });
 });

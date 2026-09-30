@@ -1,27 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useAnimatedNumber(target: number, ms = 450) {
-  const [v, setV] = useState(target);
-  const from = useRef(target);
+const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+
+/** Anima un número hasta `target` con una curva ease-out. Respeta `prefers-reduced-motion`. */
+export function useAnimatedNumber(target: number, durationMs = 450) {
+  const [value, setValue] = useState(target);
+  const current = useRef(target);
+  const reduced = prefersReducedMotion();
+
   useEffect(() => {
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) {
-      setV(target);
-      from.current = target;
-      return;
-    }
+    if (reduced) return;
+    const from = current.current;
     const start = performance.now();
-    const a = from.current;
-    let raf = 0;
-    const tick = (t: number) => {
-      const p = Math.min(1, (t - start) / ms);
-      const e = 1 - Math.pow(1 - p, 3);
-      const cur = a + (target - a) * e;
-      from.current = cur;
-      setV(cur);
-      if (p < 1) raf = requestAnimationFrame(tick);
+    let frame = 0;
+    const tick = (now: number) => {
+      const progress = Math.min(1, (now - start) / durationMs);
+      current.current = from + (target - from) * (1 - Math.pow(1 - progress, 3));
+      setValue(current.current);
+      if (progress < 1) frame = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [target, ms]);
-  return v;
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [target, durationMs, reduced]);
+
+  return reduced ? target : value;
 }

@@ -2,58 +2,64 @@ import * as ToggleGroup from "@radix-ui/react-toggle-group";
 import { Drawer } from "vaul";
 import { buildDays, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_LABEL } from "../lib/rates";
-import type { DayOverride, DayType, GuardiaMode } from "../lib/types";
-import type { MonthConfig } from "../lib/types";
-import { IconMoon, IconWarn } from "./icons";
+import type { DayOverride, DayType, DayView, Guardia, GuardiaMode, MonthConfig } from "../lib/types";
+import { IconClose, IconMoon, IconWarn } from "./icons";
 import { Toggle } from "./ui";
 
-const WD = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-const TYPES: DayType[] = ["lab", "sdf", "esp", "vac", "baja"];
-const MODES: { v: GuardiaMode; l: string; s: string }[] = [
-  { v: "17", l: "17 h", s: "15:00–08:00" },
-  { v: "24", l: "24 h", s: "08:00–08:00" },
-  { v: "custom", l: "Otra", s: "a medida" },
+const WEEKDAYS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+const DAY_TYPES: DayType[] = ["lab", "sdf", "esp", "vac", "baja"];
+const GUARDIA_MODES: { value: GuardiaMode; label: string; hint: string }[] = [
+  { value: "17", label: "17 h", hint: "15:00–08:00" },
+  { value: "24", label: "24 h", hint: "08:00–08:00" },
+  { value: "custom", label: "Otra", hint: "a medida" },
 ];
 
-export function DaySheet({
-  month, cfg, day, onClose, onChange,
-}: {
+interface Props {
   month: string;
   cfg: MonthConfig;
+  /** Día del mes abierto, o null si el panel está cerrado. */
   day: number | null;
   onClose: () => void;
-  onChange: (n: number, o: DayOverride | null) => void;
-}) {
-  const days = buildDays(month, cfg.days);
-  const d = day !== null ? days[day - 1] : null;
+  onChange: (day: number, override: DayOverride | null) => void;
+}
 
+export function DaySheet({ month, cfg, day, onClose, onChange }: Props) {
+  const days = day !== null ? buildDays(month, cfg.days) : [];
   return (
-    <Drawer.Root open={day !== null} onOpenChange={(o) => !o && onClose()}>
+    <Drawer.Root open={day !== null} onOpenChange={(open) => !open && onClose()}>
       <Drawer.Portal>
         <Drawer.Overlay className="sheet-backdrop" />
         <Drawer.Content className="sheet" aria-describedby={undefined}>
-          {day !== null && d && <Body {...{ month, cfg, day, d, days, onClose, onChange }} />}
+          {day !== null && <SheetBody day={day} days={days} cfg={cfg} onClose={onClose} onChange={onChange} />}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
   );
 }
 
-function Body({ cfg, day, d, days, onClose, onChange }: {
-  month: string; cfg: MonthConfig; day: number; d: ReturnType<typeof buildDays>[number]; days: ReturnType<typeof buildDays>;
-  onClose: () => void; onChange: (n: number, o: DayOverride | null) => void;
-}) {
-  const absent = d.type === "vac" || d.type === "baja";
-  const defaultType: DayType = d.isWeekend ? "sdf" : "lab";
-  const split = d.guardia ? splitGuardia(days, day - 1) : null;
+interface BodyProps extends Pick<Props, "cfg" | "onClose" | "onChange"> {
+  day: number;
+  days: DayView[];
+}
 
-  const setType = (t: DayType) => {
-    const type = t === defaultType ? undefined : t;
-    const keepG = t !== "vac" && t !== "baja";
-    onChange(day, { type, guardia: keepG ? cfg.days[day]?.guardia ?? null : null });
+function SheetBody({ day, days, cfg, onClose, onChange }: BodyProps) {
+  const view = days[day - 1];
+  const stored = cfg.days[day];
+  const absent = view.type === "vac" || view.type === "baja";
+  const defaultType: DayType = view.isWeekend ? "sdf" : "lab";
+  const split = view.guardia ? splitGuardia(days, day - 1) : null;
+
+  const setType = (type: DayType) => {
+    // Vacaciones y baja son incompatibles con una guardia.
+    const keepGuardia = type !== "vac" && type !== "baja";
+    onChange(day, {
+      type: type === defaultType ? undefined : type,
+      guardia: keepGuardia ? (stored?.guardia ?? null) : null,
+    });
   };
-  const setGuardia = (g: { mode: GuardiaMode; customHours: number } | null) =>
-    onChange(day, { type: cfg.days[day]?.type, guardia: g });
+  const setGuardia = (guardia: Guardia | null) => onChange(day, { type: stored?.type, guardia });
+  const setHours = (hours: number) =>
+    view.guardia && setGuardia({ ...view.guardia, customHours: Math.min(24, Math.max(0, hours)) });
 
   return (
     <>
@@ -61,63 +67,108 @@ function Body({ cfg, day, d, days, onClose, onChange }: {
       <div className="sheet-head">
         <div>
           <Drawer.Title className="sheet-day">{day}</Drawer.Title>
-          <p className="sheet-wd">{WD[d.weekday]}</p>
+          <p className="sheet-wd">{WEEKDAYS[view.weekday]}</p>
         </div>
-        <button className="icon-btn" onClick={onClose} aria-label="Cerrar">✕</button>
+        <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
+          <IconClose size={18} />
+        </button>
       </div>
 
       <p className="sheet-label">Tipo de día</p>
-      <ToggleGroup.Root type="single" value={d.type} onValueChange={(v) => v && setType(v as DayType)} className="type-grid">
-        {TYPES.map((t) => (
-          <ToggleGroup.Item key={t} value={t} className={`type-chip t-${t}`}>{DAY_TYPE_LABEL[t]}</ToggleGroup.Item>
+      <ToggleGroup.Root
+        type="single"
+        value={view.type}
+        onValueChange={(value) => value && setType(value as DayType)}
+        className="type-grid"
+      >
+        {DAY_TYPES.map((type) => (
+          <ToggleGroup.Item key={type} value={type} className={`type-chip t-${type}`}>
+            {DAY_TYPE_LABEL[type]}
+          </ToggleGroup.Item>
         ))}
       </ToggleGroup.Root>
 
       <div className={"g-row" + (absent ? " disabled" : "")}>
         <div className="g-row-l">
-          <span className="g-ico"><IconMoon size={18} /></span>
+          <span className="g-ico">
+            <IconMoon size={18} />
+          </span>
           <div>
-            <p className="sheet-label" style={{ margin: 0 }}>Guardia</p>
+            <p className="sheet-label" style={{ margin: 0 }}>
+              Guardia
+            </p>
             <p className="g-sub">{absent ? "No disponible en vacaciones o baja" : "Empieza este día"}</p>
           </div>
         </div>
         <Toggle
-          label="Guardia" checked={!!d.guardia} disabled={absent}
-          onChange={(v) => setGuardia(v ? { mode: d.isWeekend || d.type !== "lab" ? "24" : "17", customHours: 17 } : null)}
+          label="Guardia"
+          checked={!!view.guardia}
+          disabled={absent}
+          onChange={(on) => setGuardia(on ? { mode: view.type === "lab" ? "17" : "24", customHours: 17 } : null)}
         />
       </div>
 
-      {d.guardia && (
+      {view.guardia && (
         <div className="g-panel">
-          <ToggleGroup.Root type="single" className="seg" value={d.guardia.mode} onValueChange={(v) => v && setGuardia({ ...d.guardia!, mode: v as GuardiaMode })}>
-            {MODES.map((m) => (
-              <ToggleGroup.Item key={m.v} value={m.v} className="seg-item"><b>{m.l}</b><small>{m.s}</small></ToggleGroup.Item>
+          <ToggleGroup.Root
+            type="single"
+            className="seg"
+            value={view.guardia.mode}
+            onValueChange={(mode) => mode && setGuardia({ ...view.guardia!, mode: mode as GuardiaMode })}
+          >
+            {GUARDIA_MODES.map((m) => (
+              <ToggleGroup.Item key={m.value} value={m.value} className="seg-item">
+                <b>{m.label}</b>
+                <small>{m.hint}</small>
+              </ToggleGroup.Item>
             ))}
           </ToggleGroup.Root>
-          {d.guardia.mode === "custom" && (
+
+          {view.guardia.mode === "custom" && (
             <div className="stepper">
-              <button onClick={() => setGuardia({ ...d.guardia!, customHours: Math.max(0, d.guardia!.customHours - 0.5) })}>−</button>
+              <button onClick={() => setHours(view.guardia!.customHours - 0.5)} aria-label="Menos horas">
+                −
+              </button>
               <input
-                type="number" inputMode="decimal" min={0} max={24} step={0.5} value={d.guardia.customHours}
-                onChange={(e) => setGuardia({ ...d.guardia!, customHours: Math.max(0, parseFloat(e.target.value) || 0) })}
+                type="number"
+                inputMode="decimal"
+                min={0}
+                max={24}
+                step={0.5}
+                value={view.guardia.customHours}
+                onChange={(e) => setHours(parseFloat(e.target.value) || 0)}
+                aria-label="Horas de guardia"
               />
-              <button onClick={() => setGuardia({ ...d.guardia!, customHours: Math.min(24, d.guardia!.customHours + 0.5) })}>+</button>
+              <button onClick={() => setHours(view.guardia!.customHours + 0.5)} aria-label="Más horas">
+                +
+              </button>
               <span>horas a tarifa del día</span>
             </div>
           )}
-          {split && d.guardia.mode !== "custom" && (
+
+          {split && view.guardia.mode !== "custom" && (
             <p className="g-split">
-              <b>{split.day0} h</b> a tarifa «{DAY_TYPE_LABEL[d.type]}»
-              {split.day1 > 0 && split.day1Type && <> + <b>{split.day1} h</b> del día siguiente</>}
+              <b>{split.day0} h</b> a tarifa «{DAY_TYPE_LABEL[view.type]}»
+              {split.day1 > 0 && (
+                <>
+                  {" "}
+                  + <b>{split.day1} h</b> del día siguiente
+                </>
+              )}
             </p>
           )}
           {split && split.deferred > 0 && (
-            <p className="warn-box"><IconWarn size={14} /> {split.deferred} h caen ya en el mes siguiente: se pagarán en esa complementaria, no en este mes.</p>
+            <p className="warn-box">
+              <IconWarn size={14} /> {split.deferred} h caen ya en el mes siguiente: se pagarán en esa complementaria,
+              no en este mes.
+            </p>
           )}
         </div>
       )}
 
-      <button className="primary-btn" onClick={onClose}>Listo</button>
+      <button className="primary-btn" onClick={onClose}>
+        Listo
+      </button>
     </>
   );
 }

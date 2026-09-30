@@ -1,5 +1,5 @@
 import { EMPRESA, MIN_CC, RATES, SS, SUELDO_BASE } from "./rates";
-import type { DayOverride, DayType, DayView, MonthConfig, PayType } from "./types";
+import type { DayOverride, DayView, MonthConfig, PayType } from "./types";
 
 export const r2 = (x: number) => Math.round((x + Number.EPSILON) * 100) / 100;
 
@@ -158,9 +158,27 @@ export function computeTotals(key: string, cfg: MonthConfig): Totals {
   emp.total = r2(emp.cc + emp.it + emp.ims + emp.desempleo + emp.fp);
 
   return {
-    daysInMonth, workedDays, guardias, buckets, extrasBuckets, guardiasBruto, extrasBruto, deferredTotal,
-    sueldoOrdinario, totalBaseDesempleo, minCC, totalBaseCC, desemDed, fpDed, ccDed, totalSS,
-    bruto, irpfPct, irpfAmount, neto, emp,
+    daysInMonth,
+    workedDays,
+    guardias,
+    buckets,
+    extrasBuckets,
+    guardiasBruto,
+    extrasBruto,
+    deferredTotal,
+    sueldoOrdinario,
+    totalBaseDesempleo,
+    minCC,
+    totalBaseCC,
+    desemDed,
+    fpDed,
+    ccDed,
+    totalSS,
+    bruto,
+    irpfPct,
+    irpfAmount,
+    neto,
+    emp,
   };
 }
 
@@ -169,7 +187,11 @@ export function estimateIrpf(bruto: number) {
   const annual = bruto * 12;
   const taxable = Math.max(0, annual - 5550);
   const brackets: [number, number][] = [
-    [12450, 0.19], [20200, 0.24], [35200, 0.3], [60000, 0.37], [300000, 0.45],
+    [12450, 0.19],
+    [20200, 0.24],
+    [35200, 0.3],
+    [60000, 0.37],
+    [300000, 0.45],
   ];
   let tax = 0;
   let prev = 0;
@@ -182,13 +204,11 @@ export function estimateIrpf(bruto: number) {
   return annual > 0 ? Math.round((tax / annual) * 1000) / 10 : 0;
 }
 
-export function isPay(t: DayType): t is PayType {
-  return t === "lab" || t === "sdf" || t === "esp";
-}
-
 export const fmtEur = (n: number) => {
   const v = r2(n);
-  return (Object.is(v, -0) ? 0 : v).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+  return (
+    (Object.is(v, -0) ? 0 : v).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €"
+  );
 };
 export const fmtNum = (n: number) =>
   r2(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

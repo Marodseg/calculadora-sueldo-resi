@@ -1,4 +1,4 @@
-import { buildDays, firstWeekday, splitGuardia } from "../lib/calc";
+import { buildDays, currentMonthKey, firstWeekday, splitGuardia } from "../lib/calc";
 import { DAY_TYPE_SHORT } from "../lib/rates";
 import type { MonthConfig } from "../lib/types";
 import { IconMoon } from "./icons";
@@ -9,7 +9,7 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
   const days = buildDays(month, cfg.days);
   const offset = (firstWeekday(month) + 6) % 7;
   const today = new Date();
-  const isThisMonth = month === `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}`;
+  const isThisMonth = month === currentMonthKey();
   const guardias = days.filter((d) => d.guardia).length;
   const worked = days.filter((d) => d.type !== "vac" && d.type !== "baja").length;
 
@@ -18,13 +18,23 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
       <div className="card-head">
         <h2 className="card-title">Calendario</h2>
         <div className="mini-stats">
-          <span><b className="mono">{worked}</b>/{days.length} días</span>
-          <span><b className="mono">{guardias}</b> guardias</span>
+          <span>
+            <b className="mono">{worked}</b>/{days.length} días
+          </span>
+          <span>
+            <b className="mono">{guardias}</b> guardias
+          </span>
         </div>
       </div>
-      <div className="cal" role="grid" aria-label="Calendario del mes">
-        {HEAD.map((h) => <div key={h} className="cal-head">{h}</div>)}
-        {Array.from({ length: offset }).map((_, i) => <div key={"e" + i} />)}
+      <div className="cal" role="group" aria-label="Calendario del mes">
+        {HEAD.map((h) => (
+          <div key={h} className="cal-head">
+            {h}
+          </div>
+        ))}
+        {Array.from({ length: offset }).map((_, i) => (
+          <div key={"e" + i} />
+        ))}
         {days.map((d, idx) => {
           const split = d.guardia ? splitGuardia(days, idx) : null;
           const total = split ? split.day0 + split.day1 : 0;
@@ -38,7 +48,10 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
             >
               <span className="cell-n">{d.n}</span>
               {d.guardia ? (
-                <span className="cell-g"><IconMoon size={10} />{d.guardia.mode === "custom" ? d.guardia.customHours : total || d.guardia.mode}h</span>
+                <span className="cell-g">
+                  <IconMoon size={10} />
+                  {d.guardia.mode === "custom" ? d.guardia.customHours : total || d.guardia.mode}h
+                </span>
               ) : changed && d.type !== "lab" && d.type !== "sdf" ? (
                 <span className="cell-tag">{DAY_TYPE_SHORT[d.type]}</span>
               ) : null}
@@ -47,11 +60,26 @@ export function Calendar({ month, cfg, onPick }: { month: string; cfg: MonthConf
         })}
       </div>
       <div className="legend">
-        <span><i className="lg t-lab" />Laborable</span>
-        <span><i className="lg t-sdf" />S-D-F</span>
-        <span><i className="lg t-esp" />F. especial</span>
-        <span><i className="lg t-vac" />Vacaciones</span>
-        <span><i className="lg t-baja" />Baja</span>
+        <span>
+          <i className="lg t-lab" />
+          Laborable
+        </span>
+        <span>
+          <i className="lg t-sdf" />
+          S-D-F
+        </span>
+        <span>
+          <i className="lg t-esp" />
+          F. especial
+        </span>
+        <span>
+          <i className="lg t-vac" />
+          Vacaciones
+        </span>
+        <span>
+          <i className="lg t-baja" />
+          Baja
+        </span>
       </div>
       <p className="hint">Toca un día para marcar guardia, festivo, vacaciones o baja.</p>
     </section>

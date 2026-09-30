@@ -5,7 +5,17 @@ import * as Accordion from "@radix-ui/react-accordion";
 import type { ReactNode } from "react";
 import { IconCheck, IconChevron } from "./icons";
 
-export function Toggle({ checked, onChange, disabled, label }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean; label: string }) {
+export function Toggle({
+  checked,
+  onChange,
+  disabled,
+  label,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  disabled?: boolean;
+  label: string;
+}) {
   return (
     <Switch.Root className="switch" checked={checked} onCheckedChange={onChange} disabled={disabled} aria-label={label}>
       <Switch.Thumb className="switch-thumb" />
@@ -14,8 +24,18 @@ export function Toggle({ checked, onChange, disabled, label }: { checked: boolea
 }
 
 export function Confirm({
-  trigger, title, description, action, onConfirm,
-}: { trigger: ReactNode; title: string; description: string; action: string; onConfirm: () => void }) {
+  trigger,
+  title,
+  description,
+  action,
+  onConfirm,
+}: {
+  trigger: ReactNode;
+  title: string;
+  description: string;
+  action: string;
+  onConfirm: () => void;
+}) {
   return (
     <AlertDialog.Root>
       <AlertDialog.Trigger asChild>{trigger}</AlertDialog.Trigger>
@@ -25,8 +45,14 @@ export function Confirm({
           <AlertDialog.Title className="dlg-title">{title}</AlertDialog.Title>
           <AlertDialog.Description className="dlg-desc">{description}</AlertDialog.Description>
           <div className="dlg-actions">
-            <AlertDialog.Cancel asChild><button className="chip-btn">Cancelar</button></AlertDialog.Cancel>
-            <AlertDialog.Action asChild><button className="chip-btn danger-solid" onClick={onConfirm}>{action}</button></AlertDialog.Action>
+            <AlertDialog.Cancel asChild>
+              <button className="chip-btn">Cancelar</button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action asChild>
+              <button className="chip-btn danger-solid" onClick={onConfirm}>
+                {action}
+              </button>
+            </AlertDialog.Action>
           </div>
         </AlertDialog.Content>
       </AlertDialog.Portal>
@@ -34,12 +60,24 @@ export function Confirm({
   );
 }
 
-export function Dropdown<T extends string>({ value, onChange, options, label }: { value: T; onChange: (v: T) => void; options: { value: T; label: string }[]; label: string }) {
+export function Dropdown<T extends string>({
+  value,
+  onChange,
+  options,
+  label,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+  label: string;
+}) {
   return (
     <Select.Root value={value} onValueChange={(v) => onChange(v as T)}>
       <Select.Trigger className="select-trigger" aria-label={label}>
         <Select.Value />
-        <Select.Icon><IconChevron size={16} /></Select.Icon>
+        <Select.Icon>
+          <IconChevron size={16} />
+        </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
         <Select.Content className="select-content" position="popper" sideOffset={6}>
@@ -47,7 +85,9 @@ export function Dropdown<T extends string>({ value, onChange, options, label }: 
             {options.map((o) => (
               <Select.Item key={o.value} value={o.value} className="select-item">
                 <Select.ItemText>{o.label}</Select.ItemText>
-                <Select.ItemIndicator className="select-check"><IconCheck size={16} /></Select.ItemIndicator>
+                <Select.ItemIndicator className="select-check">
+                  <IconCheck size={16} />
+                </Select.ItemIndicator>
               </Select.Item>
             ))}
           </Select.Viewport>

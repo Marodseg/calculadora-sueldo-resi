@@ -1,13 +1,21 @@
 import { currentMonthKey, monthLabel, shiftMonth } from "../lib/calc";
 import { IconLeft, IconRight } from "./icons";
 
-export function MonthSwitcher({ month, onChange, configured }: { month: string; onChange: (m: string) => void; configured: boolean }) {
+export function MonthSwitcher({
+  month,
+  onChange,
+  configured,
+}: {
+  month: string;
+  onChange: (m: string) => void;
+  configured: boolean;
+}) {
   const isNow = month === currentMonthKey();
   return (
     <header className="topbar">
       <div className="topbar-inner">
         <button className="icon-btn" onClick={() => onChange(shiftMonth(month, -1))} aria-label="Mes anterior">
-          <IconLeft />
+          <IconLeft size={22} />
         </button>
         <div className="month-title">
           <label className="month-pick">
@@ -24,7 +32,7 @@ export function MonthSwitcher({ month, onChange, configured }: { month: string; 
           </span>
         </div>
         <button className="icon-btn" onClick={() => onChange(shiftMonth(month, 1))} aria-label="Mes siguiente">
-          <IconRight />
+          <IconRight size={22} />
         </button>
         {!isNow && (
           <button className="chip-btn today" onClick={() => onChange(currentMonthKey())}>
