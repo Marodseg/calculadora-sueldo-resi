@@ -1628,3 +1628,57 @@ summary:focus-visible {
 .bars.year .bar-track {
   border-radius: 7px;
 }
+
+/* --- compartir --- */
+.share-btn {
+  width: 100%;
+  height: 46px;
+}
+.share-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+.share-preview {
+  margin: 4px auto 14px;
+  max-width: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  aspect-ratio: 1080 / 1350;
+}
+.share-preview img,
+.share-skeleton {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.share-skeleton {
+  animation: pulse 1.2s ease-in-out infinite;
+  background: var(--surface-2);
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+.share-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+.share-actions .primary-btn {
+  margin-top: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.primary-btn:disabled,
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

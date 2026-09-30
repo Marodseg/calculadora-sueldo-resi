@@ -7,8 +7,9 @@ import { DaySheet } from "./components/DaySheet";
 import { Extras } from "./components/Extras";
 import { MonthSwitcher } from "./components/Header";
 import { Hero } from "./components/Hero";
-import { IconCalendar, IconChart, IconInfo, IconReceipt, IconReset, IconTrend } from "./components/icons";
+import { IconCalendar, IconChart, IconInfo, IconReceipt, IconReset, IconShare, IconTrend } from "./components/icons";
 import { Irpf } from "./components/Irpf";
+import { ShareSheet } from "./components/ShareSheet";
 import { Confirm } from "./components/ui";
 import { YearPicker } from "./components/YearPicker";
 import { useStore } from "./lib/useStore";
@@ -32,6 +33,7 @@ export default function App() {
   const store = useStore();
   const [tab, setTab] = useState<Tab>("mes");
   const [openDay, setOpenDay] = useState<number | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -90,6 +92,9 @@ export default function App() {
             {tab === "nomina" && (
               <>
                 <Hero totals={store.totals} />
+                <button className="btn share-btn" onClick={() => setShareOpen(true)}>
+                  <IconShare size={16} /> Compartir resumen del mes
+                </button>
                 <Breakdown store={store} />
               </>
             )}
@@ -119,6 +124,8 @@ export default function App() {
           onClose={() => setOpenDay(null)}
           onChange={store.setDay}
         />
+
+        <ShareSheet store={store} open={shareOpen} onOpenChange={setShareOpen} />
 
         <Toaster position="top-center" richColors closeButton={false} toastOptions={{ className: "toast" }} />
 

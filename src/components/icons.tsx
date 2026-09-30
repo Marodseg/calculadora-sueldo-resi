@@ -23,4 +23,6 @@ export {
   ArrowRight as IconArrow,
   Smartphone as IconSmartphone,
   Flag as IconFlag,
+  Share2 as IconShare,
+  Copy as IconCopy,
 } from "lucide-react";
