@@ -1,4 +1,4 @@
-import { fmtEur, fmtNum, monthLabel, type Totals } from "./calc";
+import { fmtEur, fmtHours, fmtNum, monthLabel, type Totals } from "./calc";
 import { DAY_TYPE_LABEL } from "./rates";
 import type { DayType, DayView, MonthConfig } from "./types";
 
@@ -10,9 +10,6 @@ export interface ShareInput {
 }
 
 const totalGuardiaHours = (t: Totals) => t.buckets.lab + t.buckets.sdf + t.buckets.esp;
-
-/** Horas sin decimales innecesarios: 108 → "108", 17,5 → "17,5". */
-const fmtHours = (h: number) => h.toLocaleString("es-ES", { maximumFractionDigits: 1 });
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 

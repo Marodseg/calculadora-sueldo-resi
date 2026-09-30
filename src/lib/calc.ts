@@ -196,4 +196,8 @@ export const fmtEur = (n: number) => {
 };
 export const fmtNum = (n: number) =>
   r2(n).toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export const MONTHS_SHORT = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+/** Horas sin decimales innecesarios: 108 → "108", 17,5 → "17,5". */
+export const fmtHours = (h: number) => h.toLocaleString("es-ES", { maximumFractionDigits: 1 });
 export const fmtEurShort = (n: number) => Math.round(n).toLocaleString("es-ES") + " €";

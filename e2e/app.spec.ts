@@ -86,6 +86,19 @@ test.describe("nómina, año e historial", () => {
     await expect(page.getByText("Cuota anual estimada")).toBeVisible();
   });
 
+  test("la pestaña Año resume las guardias del año", async ({ page }) => {
+    await page.goto("./");
+    await page.getByRole("button", { name: "Año", exact: true }).click();
+    await expect(page.getByRole("heading", { name: /Guardias de 2026/ })).toBeVisible();
+    // Los datos de ejemplo tienen 4 guardias en cada uno de los 6 meses.
+    await expect(page.getByTestId("stat-guardias")).toContainText("24");
+    await expect(page.getByTestId("stat-horas")).toContainText(" h");
+    await expect(page.getByText("Media por mes")).toBeVisible();
+    await expect(page.getByRole("group", { name: "Guardias por día de la semana" })).toBeVisible();
+    await expect(page.getByRole("img", { name: /^Enero de 2026: 4 guardias/i })).toBeVisible();
+    await expect(page.getByRole("img", { name: /^Julio de 2026: sin datos/i })).toBeVisible();
+  });
+
   test("el historial lista los meses guardados y permite abrirlos", async ({ page }) => {
     await page.goto("./");
     await page.getByRole("button", { name: "Historial", exact: true }).click();

@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { fmtEur, fmtEurShort, fmtNum, monthLabel, parseMonth } from "../lib/calc";
+import { fmtEur, fmtEurShort, fmtNum, monthLabel, MONTHS_SHORT, parseMonth } from "../lib/calc";
+import { summarizeGuardias } from "../lib/guardiaStats";
+import { GuardiasResumen } from "./GuardiasResumen";
 import { OTROS_GASTOS } from "../lib/irpf";
 import type { Store } from "../lib/useStore";
 import { projectYear } from "../lib/year";
 import { m } from "framer-motion";
 import { IconBank, IconInfo, IconLeft, IconRight, IconSpark, IconWallet } from "./icons";
-
-const MONTH_SHORT = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
 /** 2.646 → "2,6k": los importes completos no caben sobre 12 barras en un móvil. */
 const fmtThousands = (n: number) => (n / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + "k";
@@ -14,6 +14,7 @@ const fmtThousands = (n: number) => (n / 1000).toLocaleString("es-ES", { maximum
 export function YearView({ store, onOpen }: { store: Store; onOpen: (month: string) => void }) {
   const [year, setYear] = useState(() => parseMonth(store.month).y);
   const p = projectYear(store.data.months, year);
+  const guardias = summarizeGuardias(store.data.months, year);
   const maxNeto = Math.max(1, ...p.months.map((mo) => mo.neto));
   const { irpf } = p;
 
@@ -86,7 +87,7 @@ export function YearView({ store, onOpen }: { store: Store; onOpen: (month: stri
                         transition={{ type: "spring", stiffness: 120, damping: 18 }}
                       />
                     </span>
-                    <span className="bar-lbl">{MONTH_SHORT[parseMonth(mo.key).m - 1]}</span>
+                    <span className="bar-lbl">{MONTHS_SHORT[parseMonth(mo.key).m - 1]}</span>
                   </>
                 );
                 return mo.projected ? (
@@ -121,6 +122,8 @@ export function YearView({ store, onOpen }: { store: Store; onOpen: (month: stri
               </span>
             </div>
           </section>
+
+          <GuardiasResumen summary={guardias} />
 
           <section className="card">
             <h2 className="card-title">Retención de IRPF estimada</h2>

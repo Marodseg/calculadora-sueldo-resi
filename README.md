@@ -36,6 +36,9 @@ tarifas del Anexo XVI de Retribuciones del SAS.
   calcula la retención de IRPF siguiendo el esquema de retenciones de la AEAT para un soltero sin hijos (Seguridad Social, gastos
   deducibles, reducción por rendimientos del trabajo y escala progresiva). Desde el mes puedes copiar ese
   porcentaje con «Estimar».
+- **Resumen anual de guardias.** Guardias y horas del año, ingresos que suponen sobre el bruto, horas por tarifa
+  (laborable, fin de semana/festivo, especial), guardias por día de la semana y por mes, media mensual, mes con más
+  guardias y días de vacaciones o baja.
 - **Compartir el mes.** Genera en tu dispositivo una imagen con el resumen (con o sin importes, para compartir solo
   las guardias) y la envía con el menú de compartir del móvil, la descarga o copia el resumen como texto.
 - **Historial.** Gráfico del líquido por mes, acumulado y media mensual.
@@ -48,7 +51,12 @@ tarifas del Anexo XVI de Retribuciones del SAS.
   <img src="docs/screenshots/festivos.png" width="23%" alt="Calendario de abril con los festivos marcados" />
   <img src="docs/screenshots/compartir.png" width="23%" alt="Vista previa para compartir el resumen del mes" />
   <img src="docs/screenshots/historial.png" width="23%" alt="Historial de meses con gráfico" />
+  <img src="docs/screenshots/guardias.png" width="23%" alt="Resumen anual de guardias" />
+</p>
+
+<p align="center">
   <img src="docs/screenshots/mes-oscuro.png" width="23%" alt="Modo oscuro" />
+  <img src="docs/screenshots/info.png" width="23%" alt="Información y copia de seguridad" />
 </p>
 
 ## Privacidad
@@ -77,6 +85,7 @@ src/
 │   ├── holidays.ts       # Festivos de Andalucía y Granada (Semana Santa, traslados…)
 │   ├── irpf.ts           # Estimación de la retención de IRPF
 │   ├── year.ts           # Proyección del año natural a partir de los meses guardados
+│   ├── guardiaStats.ts   # Resumen anual de guardias (horas, tarifas, días de la semana…)
 │   ├── share.ts          # Imagen y texto del resumen del mes para compartir
 │   ├── storage.ts        # Persistencia en localStorage + validación de datos importados
 │   ├── useStore.ts       # Estado de la app (meses, mes activo, acciones)
