@@ -6,9 +6,21 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     groups:
+      # ESLint y @eslint/js se publican a la vez y cada uno exige la misma versión mayor del otro:
+      # actualizados por separado, el CI falla por conflicto de dependencias.
+      eslint:
+        patterns: ["eslint", "@eslint/js"]
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # typescript-eslint aún no admite TypeScript 7 (ver "typescript" en package.json): se mantiene la 6.x.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      # Todas las Actions en una sola PR: se actualizan juntas y se prueban juntas.
+      actions:
+        patterns: ["*"]

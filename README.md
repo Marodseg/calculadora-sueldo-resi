@@ -106,7 +106,7 @@ totales. Las tarifas están aparte, en `src/lib/rates.ts`, para actualizarlas ca
 
 ## Desarrollo
 
-Requiere Node 20 o superior.
+Requiere Node 20.19 o superior (o 22.13+).
 
 ```bash
 npm install
