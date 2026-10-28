@@ -52,8 +52,7 @@ export function Breakdown({ store }: { store: Store }) {
     v: "−" + fmtEur(t.ccDed),
     kind: "neg",
   });
-  if (cfg.year !== "R1")
-    rows.push({ k: "ir", l: `IRPF ${fmtNum(t.irpfPct)} %`, v: "−" + fmtEur(t.irpfAmount), kind: "neg" });
+  if (t.irpfPct) rows.push({ k: "ir", l: `IRPF ${fmtNum(t.irpfPct)} %`, v: "−" + fmtEur(t.irpfAmount), kind: "neg" });
   rows.push({ k: "ne", l: "Líquido a percibir", v: fmtEur(t.neto), kind: "total" });
 
   const nextLabel = monthLabel(shiftMonth(month, 1), { month: "long", year: "numeric" });

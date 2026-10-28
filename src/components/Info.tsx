@@ -151,26 +151,28 @@ export function Info({ store }: { store: Store }) {
           <p>
             Como titulado superior tu base de contingencias comunes nunca baja de{" "}
             <b className="mono">{fmtNum(MIN_CC)} €</b>
-            /mes (prorrateada si trabajas menos días). Cuando sueldo + guardias superan ese mínimo, la base pasa a ser
-            tu base real.
+            /mes (prorrateada si trabajas menos días). El sueldo cotiza con su diario a 30 días más la sexta parte de
+            pagas extras, también a céntimo (1.379,90 € de sueldo → base de 1.610,10 €). Cuando sueldo + guardias
+            superan el mínimo, la base de contingencias comunes pasa a ser tu base real. En el recibo del hospital el
+            mínimo se carga en la nómina ordinaria y el resto en la complementaria de guardias; aquí ves la suma.
           </p>
         </Acc.Item>
 
-        <Acc.Item value="irpf" title="Por qué el IRPF es 0 % en R1">
+        <Acc.Item value="irpf" title="IRPF">
           <p>
-            Hacienda calcula la retención sobre una proyección de tus ingresos del año. Si tu contrato de R1 empieza a
-            mitad de año, la proyección solo cuenta los meses restantes y queda por debajo del mínimo exento (unos
-            15.876 € para soltero sin hijos en 2026): retención 0 %.
+            Hacienda calcula la retención sobre una proyección de tus ingresos del año. Si el contrato de R1 empieza a
+            mitad de año, esa proyección suele quedar por debajo del mínimo exento (unos 15.876 € para soltero sin hijos
+            en 2026) y el tipo sale 0 %. No es una regla fija: en septiembre de 2026 el recibo traía 0,12 %.
           </p>
           <p>
             Desde R2 el contrato cubre un año completo con guardias, y suele aparecer una retención real (10–18 % según
-            ingresos). Indícala en cuanto la veas en tu nómina.
+            ingresos). Pon siempre el porcentaje que veas en la nómina.
           </p>
         </Acc.Item>
       </Acc.Root>
 
       <p className="disclaimer">
-        Estimación orientativa basada en nóminas reales del H. Virgen de las Nieves (jun–ago 2026) y el Anexo XVI de
+        Estimación orientativa basada en nóminas reales del H. Virgen de las Nieves (jun–sep 2026) y el Anexo XVI de
         Retribuciones del SAS. Verifica siempre el importe definitivo con tu nómina o RRHH.
       </p>
     </>

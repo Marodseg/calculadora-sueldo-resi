@@ -2,21 +2,6 @@ import type { Store } from "../lib/useStore";
 
 export function Irpf({ store }: { store: Store }) {
   const { cfg, yearProjection } = store;
-  if (cfg.year === "R1") {
-    return (
-      <section className="card">
-        <h2 className="card-title">Retención de IRPF</h2>
-        <div className="locked">
-          <span>Retención aplicada</span>
-          <b className="mono">0,00 %</b>
-        </div>
-        <p className="hint">
-          En R1 tu contrato no cubre un año fiscal completo, así que Hacienda proyecta un ingreso anual por debajo del
-          mínimo exento y no retiene IRPF.
-        </p>
-      </section>
-    );
-  }
   return (
     <section className="card">
       <h2 className="card-title">Retención de IRPF</h2>
@@ -27,7 +12,7 @@ export function Irpf({ store }: { store: Store }) {
             inputMode="decimal"
             min={0}
             max={45}
-            step={0.1}
+            step={0.01}
             placeholder="0"
             value={cfg.irpfPct ?? ""}
             onChange={(e) => {
@@ -43,9 +28,9 @@ export function Irpf({ store }: { store: Store }) {
         </button>
       </div>
       <p className="hint">
-        Pon el porcentaje que aparece en tu nómina real. «Estimar» proyecta el año {yearProjection.year} con tus meses
-        guardados ({yearProjection.irpf.pct.toLocaleString("es-ES")} %): es solo orientativo, depende de tu Modelo 145.
-        Verás el detalle en la pestaña Año.
+        {cfg.year === "R1"
+          ? "En R1 suele quedar en 0 % porque el contrato no cubre el año fiscal. Si el recibo trae otro tipo, pon el que salga: en septiembre de 2026 fue 0,12 %."
+          : `Pon el porcentaje que aparece en tu nómina real. «Estimar» proyecta el año ${yearProjection.year} con tus meses guardados (${yearProjection.irpf.pct.toLocaleString("es-ES")} %): es solo orientativo, depende de tu Modelo 145. Verás el detalle en la pestaña Año.`}
       </p>
     </section>
   );

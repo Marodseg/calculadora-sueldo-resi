@@ -4,6 +4,18 @@ import type { DayOverride, DayView, MonthConfig, PayType } from "./types";
 
 export const r2 = (x: number) => Math.round((x + Number.EPSILON) * 100) / 100;
 
+/**
+ * Base de desempleo, AT/EP y formación del sueldo de un mes completo.
+ * El SAS pasa el sueldo a diario entre 30 y redondea a céntimo; la prorrata de las dos pagas
+ * extras es la sexta parte de ese diario, también a céntimo. Por eso 1.379,90 € cotizan como
+ * 1.610,10 € y no como el 7/6 directo (1.609,88 €).
+ */
+export function ordinaryUnemploymentBase(monthlyPay: number): number {
+  const daily = r2(monthlyPay / 30);
+  const extraDaily = r2(daily / 6);
+  return r2((daily + extraDaily) * 30);
+}
+
 export function parseMonth(key: string) {
   const [y, m] = key.split("-").map(Number);
   return { y, m };
@@ -136,11 +148,15 @@ export function computeTotals(key: string, cfg: MonthConfig): Totals {
   const guardiasBruto = r2(buckets.lab * r.lab + buckets.sdf * r.sdf + buckets.esp * r.esp + extrasBruto);
 
   const sueldoFull = r2(SUELDO_BASE + r.comp);
-  const sueldoOrdinario = r2((sueldoFull * workedDays) / daysInMonth);
+  const fullMonth = workedDays === daysInMonth;
+  const sueldoOrdinario = fullMonth ? sueldoFull : r2((sueldoFull * workedDays) / daysInMonth);
 
-  const baseDesempleoOrd = r2((sueldoOrdinario * 7) / 6);
+  // Mes completo: diario a 30 días (también en meses de 31). Mes parcial: se mantiene el 7/6 del sueldo ya prorrateado.
+  const baseDesempleoOrd = fullMonth ? ordinaryUnemploymentBase(sueldoFull) : r2((sueldoOrdinario * 7) / 6);
   const totalBaseDesempleo = r2(baseDesempleoOrd + guardiasBruto);
   const minCC = r2((MIN_CC * workedDays) / daysInMonth);
+  // En los dos recibos reales el mínimo del grupo 1 se aplica en la nómina ordinaria y el resto
+  // en la complementaria. Sumados, la base de contingencias comunes coincide con esta.
   const totalBaseCC = Math.max(minCC, totalBaseDesempleo);
 
   const desemDed = r2(totalBaseDesempleo * SS.desempleo);
@@ -149,7 +165,7 @@ export function computeTotals(key: string, cfg: MonthConfig): Totals {
   const totalSS = r2(desemDed + fpDed + ccDed);
 
   const bruto = r2(sueldoOrdinario + guardiasBruto);
-  const irpfPct = cfg.year === "R1" ? 0 : cfg.irpfPct || 0;
+  const irpfPct = cfg.irpfPct || 0;
   const irpfAmount = r2((bruto * irpfPct) / 100);
   const neto = r2(bruto - totalSS - irpfAmount);
 

@@ -25,8 +25,8 @@ tarifas del Anexo XVI de Retribuciones del SAS.
   tarifa. Si empieza el último día del mes, las horas que caen en el mes siguiente se proponen como horas extra al
   configurarlo.
 - **Nómina completa.** Sueldo ordinario prorrateado, complemento de formación, guardias, base mínima de cotización
-  del grupo 1, desempleo, formación profesional, contingencias comunes + MEI e IRPF (0 % en R1, manual o estimado
-  desde R2). Incluye el coste para el hospital.
+  del grupo 1, desempleo, formación profesional, contingencias comunes + MEI e IRPF (en R1 suele ser 0 %; si el
+  recibo trae otro tipo, se indica). Incluye el coste para el hospital.
 - **Un mes, una configuración.** Cada mes se guarda por separado; los meses nuevos heredan el año de residencia y el
   IRPF del anterior.
 - **Festivos de Andalucía y Granada.** Se cuentan por defecto como fin de semana/festivo: Año Nuevo, Reyes, Día de
@@ -138,7 +138,7 @@ Cada push a `main` ejecuta lint, tests y build en GitHub Actions y publica `dist
 
 ## Aviso
 
-Es una estimación **orientativa**, basada en nóminas reales de junio a agosto de 2026 y en el Anexo XVI de
+Es una estimación **orientativa**, basada en nóminas reales de junio a septiembre de 2026 y en el Anexo XVI de
 Retribuciones del SAS. El IRPF a partir de R2 depende de tu situación personal. Verifica siempre el importe
 definitivo con tu nómina o con RRHH.
 

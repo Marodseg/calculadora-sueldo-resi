@@ -26,7 +26,7 @@ export interface ExtraHours {
 /** Configuración guardada de un mes ("YYYY-MM"). */
 export interface MonthConfig {
   year: Year;
-  /** % de retención de IRPF (solo R2+). null = sin indicar. */
+  /** % de retención de IRPF. null = 0. En R1 a menudo es 0; si la nómina trae otro tipo, se respeta. */
   irpfPct: number | null;
   days: Record<number, DayOverride>;
   extras: ExtraHours[];

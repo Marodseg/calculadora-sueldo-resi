@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeTotals, deferredHours, nextMonthFirstDayType, shiftMonth } from "./calc";
+import { computeTotals, deferredHours, nextMonthFirstDayType, ordinaryUnemploymentBase, shiftMonth } from "./calc";
 import { newMonthConfig } from "./storage";
 
 describe("calculadora", () => {
@@ -8,9 +8,10 @@ describe("calculadora", () => {
     expect(t.workedDays).toBe(30);
     expect(t.sueldoOrdinario).toBe(1379.9);
     expect(t.bruto).toBe(1379.9);
+    expect(t.totalBaseDesempleo).toBe(1610.1);
     expect(t.totalBaseCC).toBe(1989.3); // sube al mínimo del grupo 1
     expect(t.irpfAmount).toBe(0);
-    expect(t.neto).toBeCloseTo(1379.9 - 1379.9 * (7 / 6) * 0.017 - 1989.3 * 0.0485, 0);
+    expect(t.neto).toBe(1256.05);
   });
 
   it("guardia de 17 h en viernes: 9 h laborables + 8 h fin de semana", () => {
@@ -36,11 +37,25 @@ describe("calculadora", () => {
     expect(t.guardias).toBe(0);
   });
 
-  it("IRPF solo aplica desde R2", () => {
-    const r1 = newMonthConfig("R1", 15);
-    const r2 = newMonthConfig("R2", 15);
-    expect(computeTotals("2026-09", r1).irpfAmount).toBe(0);
-    expect(computeTotals("2026-09", r2).irpfAmount).toBeGreaterThan(0);
+  it("sin porcentaje la retención es 0; si la nómina trae un tipo, se aplica también en R1", () => {
+    expect(computeTotals("2026-09", newMonthConfig("R1")).irpfAmount).toBe(0);
+    expect(computeTotals("2026-09", newMonthConfig("R1", 0.12)).irpfAmount).toBe(1.66);
+    expect(computeTotals("2026-09", newMonthConfig("R2", 15)).irpfAmount).toBeGreaterThan(0);
+  });
+
+  it("nómina ordinaria de septiembre 2026 en R1, mes completo sin guardias", () => {
+    const t = computeTotals("2026-09", newMonthConfig("R1", 0.12));
+    expect(t.sueldoOrdinario).toBe(1379.9);
+    expect(ordinaryUnemploymentBase(1379.9)).toBe(1610.1);
+    expect(t.totalBaseDesempleo).toBe(1610.1);
+    expect(t.totalBaseCC).toBe(1989.3);
+    expect(t.desemDed).toBe(25.76);
+    expect(t.fpDed).toBe(1.61);
+    expect(t.ccDed).toBe(96.48);
+    expect(t.irpfAmount).toBe(1.66);
+    expect(t.totalSS).toBe(123.85);
+    expect(t.neto).toBe(1254.39);
+    expect(t.emp).toEqual({ cc: 484.39, it: 12.88, ims: 11.27, desempleo: 107.88, fp: 9.66, total: 626.08 });
   });
 });
 
