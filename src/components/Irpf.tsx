@@ -29,7 +29,7 @@ export function Irpf({ store }: { store: Store }) {
       </div>
       <p className="hint">
         {cfg.year === "R1"
-          ? "En R1 suele quedar en 0 % porque el contrato no cubre el año fiscal. Si el recibo trae otro tipo, pon el que salga: en septiembre de 2026 fue 0,12 %."
+          ? "En R1 suele quedar en 0 % porque el contrato no cubre el año fiscal. Si el recibo trae otro tipo, pon el que salga: en 2026 vimos un 0,12 %."
           : `Pon el porcentaje que aparece en tu nómina real. «Estimar» proyecta el año ${yearProjection.year} con tus meses guardados (${yearProjection.irpf.pct.toLocaleString("es-ES")} %): es solo orientativo, depende de tu Modelo 145. Verás el detalle en la pestaña Año.`}
       </p>
     </section>
